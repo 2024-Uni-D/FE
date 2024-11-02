@@ -36,7 +36,7 @@ class _Q2ScreenState extends State<Q2Screen> {
               ),
               SizedBox(height: 40),
               Text(
-                'Q2. 관심사를 알려주세요!\n(복수 선택 가능)',
+                'Q3. 관심사를 알려주세요!\n(복수 선택 가능)',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
