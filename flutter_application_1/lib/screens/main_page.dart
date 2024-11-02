@@ -6,9 +6,26 @@ import 'package:intl/date_symbol_data_local.dart'; // 로케일 초기화를 위
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('ko'); // 'ko' 로케일 초기화
-  runApp(MaterialApp(
-    home: CustomBottomNavigationBar(),
-  ));
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: HomeScreen(),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: MeterialTopNavigationBar(), // 상단바 추가
+      body: CustomBottomNavigationBar(), // 본문에서 바텀 네비게이션 바 사용
+    );
+  }
 }
 
 class CustomBottomNavigationBar extends StatefulWidget {
@@ -39,8 +56,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       backgroundColor: Color(0xFFFFF4CA),
       body: Center(
         child: Container(
-          width: 318,
-          height: 462,
+          width: 320,
+          height: 380,
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Color(0xFFF9E79F),
@@ -76,27 +93,6 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                 'assets/음성icon.svg', // SVG 파일 경로
                 width: 100, // 아이콘 크기
                 height: 100,
-              ),
-              SizedBox(height: 100),
-              Center(
-                // 버튼을 가운데 정렬
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFE2C86E),
-                    padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
-                  onPressed: () {},
-                  child: Text(
-                    'Start',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
               ),
             ],
           ),
@@ -189,6 +185,50 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class MeterialTopNavigationBar extends StatelessWidget implements PreferredSizeWidget {
+  @override
+  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      backgroundColor: Colors.white,
+      elevation: 0,
+      leading: IconButton(
+        icon: _buildCustomItem(
+          'assets/icon/back_icon.svg',
+          width: 17.375,  
+          height: 18.688,
+        ),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      ),
+      centerTitle: true,
+      actions: <Widget>[
+        IconButton(
+          icon: _buildCustomItem(
+            'assets/icon/setting.svg',
+            width: 17.363,  
+            height: 21.565, 
+          ),
+          onPressed: () {
+            // 설정 버튼을 누른 뒤 다음 동작
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCustomItem(String iconPath, {required double width, required double height}) {
+    return SvgPicture.asset(
+      iconPath,
+      width: width,
+      height: height,
     );
   }
 }
