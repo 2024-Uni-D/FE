@@ -61,6 +61,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
             ),
             SizedBox(height: 20),
             Container(
+              width: 325, // 너비 설정
+              height: 400, // 높이 설정
               margin: EdgeInsets.symmetric(horizontal: 16),
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -68,78 +70,56 @@ class _DiaryScreenState extends State<DiaryScreen> {
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: Colors.grey.shade300),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    getCurrentDate(),
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 16,
-                    ),
-                  ),
-                  Divider(color: Colors.grey),
-                  SizedBox(height: 10),
-                  Text(
-                    '오늘의 대화',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    summary,
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 14,
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Row(
+              child: Scrollbar( // 스크롤바 추가
+                thumbVisibility: true, // 항상 보여줌
+                radius: Radius.circular(20), // 스크롤바의 모서리 반경
+                child: SingleChildScrollView( // 스크롤 가능하게 만들기
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Row(
+                        children: [
+                          Text(
+                            getCurrentDate(),
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 16,
+                            ),
+                          ),
+                          SizedBox(width: 110), // SVG와의 간격 조정
+                          SvgPicture.asset(
+                            getMoodSvgPath(),
+                            width: 24,
+                            height: 24,
+                            placeholderBuilder: (context) => Container(),
+                          ),
+                        ],
+                      ),
+                      Divider(color: Colors.grey),
+                      SizedBox(height: 10),
                       Text(
-                        '오늘의 기분',
+                        '오늘의 대화',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
                         ),
                       ),
-                      SizedBox(width: 10),
-                      SvgPicture.asset(
-                        getMoodSvgPath(),
-                        width: 24,
-                        height: 24,
-                        placeholderBuilder: (context) => Container(),
-                      ),
+                      SizedBox(height: 8),
+                      // 여러 줄의 텍스트 추가
+                      for (int i = 0; i < 20; i++)
+                        Text(
+                          summary,
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontSize: 14,
+                          ),
+                        ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // 확인 버튼 동작
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFFE2C86E),
-                padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-              child: Text(
-                '확인',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            SizedBox(height: 20),
           ],
         ),
       ),
