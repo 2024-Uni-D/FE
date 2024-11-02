@@ -3,6 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import '../api/auth_api.dart';
+import '../api/diary_api.dart'; // DiaryAPI import
+import '../models/diary.dart';
 
 class DiaryScreen extends StatefulWidget {
   @override
@@ -11,14 +13,17 @@ class DiaryScreen extends StatefulWidget {
 
 class _DiaryScreenState extends State<DiaryScreen> {
   final AuthAPI authAPI = AuthAPI(); // AuthAPI 인스턴스 생성
+  final DiaryAPI diaryAPI = DiaryAPI(); // DiaryAPI 인스턴스 생성
+
   String username = "username";  // 서버에서 받아올 이름
-  String summary = "오늘의 대화 요약 내용이 여기에 표시됩니다."; // 대화 요약
+  String summary = "오늘의 대화 요약 내용이 여기에 표시됩니다."; // 일기 요약
   int mood = 2; // 0: Positive, 1: Negative, 2: Soso
 
   @override
   void initState() {
     super.initState();
-    _retrieveUsername(); // 화면이 초기화될 때 사용자 이름 불러오기
+    _retrieveUsername(); // 사용자 이름 불러오기
+    _retrieveDiaryResult(); // 일기 결과 불러오기
   }
 
   // 서버에서 사용자 이름을 가져오는 메서드
@@ -32,6 +37,22 @@ class _DiaryScreenState extends State<DiaryScreen> {
       });
     } else {
       print("사용자 이름을 불러오지 못했습니다.");
+    }
+  }
+
+  // 서버에서 오늘의 일기 결과를 가져오는 메서드
+  Future<void> _retrieveDiaryResult() async {
+    int userId = 1; // 예시로 설정한 ID, 실제로는 필요한 ID로 변경
+
+    Diary? diary = await diaryAPI.getDiaryResult(userId);
+
+    if (diary != null) {
+      setState(() {
+        summary = diary.content;
+        mood = diary.feeling; // 서버에서 받은 감정 상태(0, 1, 2)를 mood에 설정
+      });
+    } else {
+      print("오늘의 일기 결과를 불러오지 못했습니다.");
     }
   }
 
@@ -127,14 +148,13 @@ class _DiaryScreenState extends State<DiaryScreen> {
                         ),
                       ),
                       SizedBox(height: 8),
-                      for (int i = 0; i < 20; i++)
-                        Text(
-                          summary,
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 14,
-                          ),
+                      Text(
+                        summary,
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 14,
                         ),
+                      ),
                     ],
                   ),
                 ),
