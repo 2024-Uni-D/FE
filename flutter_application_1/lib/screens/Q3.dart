@@ -1,123 +1,120 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
-class Q2Screen extends StatefulWidget {
+class ChatScreen extends StatefulWidget {
   @override
-  _Q2ScreenState createState() => _Q2ScreenState();
+  _ChatScreenState createState() => _ChatScreenState();
 }
 
-class _Q2ScreenState extends State<Q2Screen> {
-  Set<int> selectedOptions = Set();
+class _ChatScreenState extends State<ChatScreen> {
+  // 예시로 백엔드에서 받아온 정보를 가정하여 responder 변수를 설정
+  String responder = "엄마"; // 실제로는 백엔드에서 받아온 데이터로 설정
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF9E79F),
+      backgroundColor: Colors.white,
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              GridView.count(
-                crossAxisCount: 2,
-                shrinkWrap: true,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-                children: [
-                  _buildOption(1, svgPath: 'assets/icon/movie.svg', text: '영화'),
-                  _buildOption(2, svgPath: 'assets/icon/music.svg', text: '음악'),
-                  _buildOption(3,
-                      svgPath: 'assets/icon/exhibition.svg', text: '전시회'),
-                  _buildOption(4,
-                      svgPath: 'assets/icon/reading.svg', text: '독서'),
-                ],
-              ),
-              SizedBox(height: 40),
-              Text(
-                'Q3. 관심사를 알려주세요!\n(복수 선택 가능)',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () {
-                  print("선택한 옵션: $selectedOptions");
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFE2C86E),
-                  padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                ),
-                child: Text(
-                  '결정',
-                  style: TextStyle(
-                    fontFamily: 'CustomFont',
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildOption(int value, {String? svgPath, required String text}) {
-    bool isSelected = selectedOptions.contains(value);
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          if (isSelected) {
-            selectedOptions.remove(value);
-          } else {
-            selectedOptions.add(value);
-          }
-        });
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8.0),
-          border: Border.all(
-            color: isSelected ? Colors.blue : Colors.grey,
-            width: isSelected ? 2 : 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 4,
-              offset: Offset(2, 2),
-            ),
-          ],
-        ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            svgPath != null
-                ? SvgPicture.asset(
-                    svgPath,
-                    width: 40,
-                    height: 40,
-                    color: Colors.black54,
-                  )
-                : Icon(Icons.help_outline, size: 40, color: Colors.black54),
-            SizedBox(height: 8),
+            SizedBox(height: 40),
             Text(
-              text,
+              '로고',
               style: TextStyle(
-                fontFamily: 'CustomFont',
-                fontSize: 16,
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
                 color: Colors.black87,
+              ),
+            ),
+            SizedBox(height: 20),
+            // 첫 번째 말풍선 - 오른쪽에 배치
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                  margin: EdgeInsets.only(right: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(15),
+                      topRight: Radius.circular(15),
+                      bottomLeft: Radius.circular(15),
+                    ),
+                  ),
+                  child: Text(
+                    '나 시험 망쳤어.',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            // 두 번째 말풍선 - 왼쪽에 배치
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(width: 16),
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(15),
+                      topRight: Radius.circular(15),
+                      bottomRight: Radius.circular(15),
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.more_horiz,
+                    color: Colors.grey.shade600,
+                    size: 24,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 100),
+            // 텍스트 입력 필드
+            Container(
+              width: 300,
+              child: TextField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: '답변을 입력하세요',
+                ),
+              ),
+            ),
+            SizedBox(height: 30),
+            // 질문과 버튼
+            Text(
+              'Q3. $responder는 뭐라고 대답하실까?', // responder 변수를 사용해 동적 텍스트 표시
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                // 버튼 눌렀을 때의 동작 추가
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+              child: Text(
+                '다음으로',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -129,6 +126,6 @@ class _Q2ScreenState extends State<Q2Screen> {
 
 void main() {
   runApp(MaterialApp(
-    home: Q2Screen(),
+    home: ChatScreen(),
   ));
 }
