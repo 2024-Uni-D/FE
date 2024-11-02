@@ -18,7 +18,71 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: Text('Body')),
+      backgroundColor: Color(0xFFFFF4CA),
+      body: Center(
+        child: Container(
+          width: 318,
+          height: 462,
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Color(0xFFF9E79F),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "2024.11.03 (토) \n오늘의 일기를 기록해볼까요?",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                ),
+              ),
+              SizedBox(height: 8),
+              Container(
+                width: 500, // 선의 길이
+                height: 2, // 선의 두께
+                color: Colors.black.withOpacity(0.5),
+              ),
+              SizedBox(height: 8),
+              Text(
+                "오늘의 일기는 아직 작성되지 않았어요",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                ),
+              ),
+              SizedBox(height: 20),
+              SvgPicture.asset(
+                'assets/음성icon.svg', // SVG 파일 경로
+                width: 100, // 아이콘 크기
+                height: 100,
+              ),
+              SizedBox(height: 100),
+              Center( // 버튼을 가운데 정렬
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFFE2C86E),
+                    padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  onPressed: () {},
+                  child: Text(
+                    'Start',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
       bottomNavigationBar: Container(
         width: 360.0,
         height: 84.0,
@@ -30,9 +94,9 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1), 
-              offset: Offset(0, -4), 
-              blurRadius: 8, 
+              color: Colors.black.withOpacity(0.1),
+              offset: Offset(0, -4),
+              blurRadius: 8,
             ),
           ],
         ),
@@ -45,51 +109,35 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: _buildCustomItem(
-                  'assets/.svg',
+                  'assets/diary.svg',
                   'Diary',
                   index: 0,
                 ),
-                label: '', 
+                label: '',
               ),
               BottomNavigationBarItem(
                 icon: _buildCustomItem(
-                  'assets/.svg',
+                  'assets/home.svg',
                   'Home',
                   index: 1,
                 ),
-                label: '', 
+                label: '',
               ),
               BottomNavigationBarItem(
                 icon: _buildCustomItem(
-                  'assets/.svg',
+                  'assets/profile.svg',
                   'Profile',
                   index: 2,
                 ),
-                label: '', 
+                label: '',
               ),
             ],
             currentIndex: _selectedIndex,
-            selectedItemColor: Colors.grey, 
-            unselectedItemColor: Colors.black, 
+            selectedItemColor: Colors.grey,
+            unselectedItemColor: Colors.black,
             onTap: _onItemTapped,
-            selectedLabelStyle: TextStyle(
-              fontSize: 11,
-              fontFamily: 'Pretendard',
-              fontStyle: FontStyle.normal,
-              fontWeight: FontWeight.w500,
-              height: 1.1,
-              letterSpacing: -0.22,
-            ),
-            unselectedLabelStyle: TextStyle(
-              fontSize: 11,
-              fontFamily: 'Pretendard',
-              fontStyle: FontStyle.normal,
-              fontWeight: FontWeight.w500,
-              height: 1.1,
-              letterSpacing: -0.22,
-            ),
-            showSelectedLabels: false, 
-            showUnselectedLabels: false, 
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
           ),
         ),
       ),
@@ -108,17 +156,16 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             height: 24.0,
             color: _selectedIndex == index ? Colors.grey : Colors.black,
           ),
-          SizedBox(height: 6.93), 
+          SizedBox(height: 6.93),
           Text(
             label,
             style: TextStyle(
               fontSize: 11,
               fontFamily: 'Pretendard',
-              fontStyle: FontStyle.normal,
               fontWeight: FontWeight.w500,
               height: 1.1,
               letterSpacing: -0.22,
-              color: _selectedIndex == index ?  Colors.grey : Colors.black,
+              color: _selectedIndex == index ? Colors.grey : Colors.black,
             ),
           ),
         ],
