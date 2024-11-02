@@ -45,7 +45,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: _buildCustomItem(
-                  'svgPath',
+                  'assets/.svg',
                   'Diary',
                   index: 0,
                 ),
@@ -53,7 +53,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
               ),
               BottomNavigationBarItem(
                 icon: _buildCustomItem(
-                  'svgPath',
+                  'assets/.svg',
                   'Home',
                   index: 1,
                 ),
@@ -61,7 +61,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
               ),
               BottomNavigationBarItem(
                 icon: _buildCustomItem(
-                  'svgPath',
+                  'assets/.svg',
                   'Profile',
                   index: 2,
                 ),
@@ -69,7 +69,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
               ),
             ],
             currentIndex: _selectedIndex,
-            selectedItemColor: Colors.white, 
+            selectedItemColor: Colors.grey, 
             unselectedItemColor: Colors.black, 
             onTap: _onItemTapped,
             selectedLabelStyle: TextStyle(
@@ -106,7 +106,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             iconPath,
             width: 24.0,
             height: 24.0,
-            color: _selectedIndex == index ? Colors.white : Colors.black,
+            color: _selectedIndex == index ? Colors.grey : Colors.black,
           ),
           SizedBox(height: 6.93), 
           Text(
@@ -118,7 +118,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
               fontWeight: FontWeight.w500,
               height: 1.1,
               letterSpacing: -0.22,
-              color: _selectedIndex == index ?  Colors.white : Colors.black,
+              color: _selectedIndex == index ?  Colors.grey : Colors.black,
             ),
           ),
         ],
