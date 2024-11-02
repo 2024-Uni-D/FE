@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart'; // 로케일 초기화를 위한 패키지
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeDateFormatting('ko'); // 'ko' 로케일 초기화
+  await initializeDateFormatting('ko');
   runApp(MyApp());
 }
 
@@ -22,8 +23,8 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MeterialTopNavigationBar(), // 상단바 추가
-      body: CustomBottomNavigationBar(), // 본문에서 바텀 네비게이션 바 사용
+      appBar: MaterialTopNavigationBar(),
+      body: CustomBottomNavigationBar(),
     );
   }
 }
@@ -36,73 +37,189 @@ class CustomBottomNavigationBar extends StatefulWidget {
 
 class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   int _selectedIndex = 0;
+  bool _hasSeenPopup = false;
+  final Color popupBorderColor = Color(0xFFDE2A3D).withOpacity(0.4);
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  @override
+  void initState() {
+    super.initState();
+    _checkIfPopupSeen();
   }
 
-  // 오늘 날짜를 가져오는 함수
+  Future<void> _checkIfPopupSeen() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _hasSeenPopup = prefs.getBool('hasSeenPopup') ?? false;
+    });
+
+    if (!_hasSeenPopup) {
+      _showPopup();
+    }
+  }
+
+  Future<void> _showPopup() async {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black54,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            side: BorderSide(color: popupBorderColor, width: 2.0),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          child: Container(
+            width: 297,
+            height: 500,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: '루틴',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: popupBorderColor,
+                          ),
+                        ),
+                        TextSpan(
+                          text: '을 설정해주세요',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    '루틴을 설정해주시면 앱을 더 유용하게 사용하실 수 있어요!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  SizedBox(height: 20),
+                  SvgPicture.asset(
+                    'assets/icon/Frame.svg',
+                    width: 400,
+                    height: 200,
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    '이제 집에 들어가는 순간 <앱이름>이 username을 반겨줄 거예요',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  Spacer(),
+                  ElevatedButton(
+                    onPressed: () async {
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      await prefs.setBool('hasSeenPopup', true);
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: popupBorderColor,
+                    ),
+                    child: Text(
+                      '확인',
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   String getCurrentDate() {
     final now = DateTime.now();
-    final formatter = DateFormat('yyyy.MM.dd (E)', 'ko'); // 예: 2024.11.03 (토)
+    final formatter = DateFormat('yyyy.MM.dd (E)', 'ko');
     return formatter.format(now);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFFF4CA),
+      backgroundColor: Colors.white,
       body: Center(
-        child: Container(
-          width: 320,
-          height: 380,
-          padding: EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Color(0xFFF9E79F),
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "${getCurrentDate()} \n오늘의 일기를 기록해볼까요?",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20,
-                ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text(
+              'LOGO',
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
               ),
-              SizedBox(height: 8),
-              Container(
-                width: 500, // 선의 길이
-                height: 2, // 선의 두께
-                color: Colors.black.withOpacity(0.5),
+            ),
+            SizedBox(height: 20),
+            Container(
+              width: 320,
+              height: 380,
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Color(0xFF3254ED),
+                borderRadius: BorderRadius.circular(8.0),
               ),
-              SizedBox(height: 8),
-              Text(
-                "오늘의 일기는 아직 작성되지 않았어요",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "${getCurrentDate()} \n오늘의 일기를 기록해볼까요?",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Container(
+                    width: 500,
+                    height: 2,
+                    color: Colors.white.withOpacity(0.5),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "오늘의 일기는 아직 작성되지 않았어요",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                  SizedBox(height: 50),
+                  Center(
+                    child: SvgPicture.asset(
+                      'assets/icon/speak_icon.svg',
+                      width: 150,
+                      height: 150,
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(height: 20),
-              SvgPicture.asset(
-                'assets/음성icon.svg', // SVG 파일 경로
-                width: 100, // 아이콘 크기
-                height: 100,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: Container(
         width: 360.0,
         height: 84.0,
         decoration: BoxDecoration(
-          color: Color(0xFFFFF4CA),
+          color: Color(0xFF3254ED),
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(16),
             topRight: Radius.circular(16),
@@ -124,72 +241,56 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: _buildCustomItem(
-                  'assets/diary.svg',
-                  'Diary',
+                  'assets/icon/diary.svg',
+                  'assets/icon/diary_selected.svg',
                   index: 0,
                 ),
                 label: '',
               ),
               BottomNavigationBarItem(
                 icon: _buildCustomItem(
-                  'assets/home.svg',
-                  'Home',
+                  'assets/icon/home_icon.svg',
+                  'assets/icon/home_icon_selected.svg',
                   index: 1,
                 ),
                 label: '',
               ),
               BottomNavigationBarItem(
                 icon: _buildCustomItem(
-                  'assets/profile.svg',
-                  'Profile',
+                  'assets/icon/profile_icon.svg',
+                  'assets/icon/profile_icon_selected.svg',
                   index: 2,
                 ),
                 label: '',
               ),
             ],
             currentIndex: _selectedIndex,
-            selectedItemColor: Colors.grey,
-            unselectedItemColor: Colors.black,
-            onTap: _onItemTapped,
+            selectedItemColor: Colors.white,
+            unselectedItemColor: Colors.white70,
+            backgroundColor: Color(0xFF3254ED),
             showSelectedLabels: false,
             showUnselectedLabels: false,
+            onTap: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
           ),
         ),
       ),
     );
   }
 
-  Widget _buildCustomItem(String iconPath, String label, {required int index}) {
-    return Container(
-      width: 80.0,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SvgPicture.asset(
-            iconPath,
-            width: 24.0,
-            height: 24.0,
-            color: _selectedIndex == index ? Colors.grey : Colors.black,
-          ),
-          SizedBox(height: 6.93),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              fontFamily: 'Pretendard',
-              fontWeight: FontWeight.w500,
-              height: 1.1,
-              letterSpacing: -0.22,
-              color: _selectedIndex == index ? Colors.grey : Colors.black,
-            ),
-          ),
-        ],
-      ),
+  Widget _buildCustomItem(String assetPath, String selectedAssetPath, {required int index}) {
+    return SvgPicture.asset(
+      _selectedIndex == index ? selectedAssetPath : assetPath,
+      width: 45, // SVG 아이콘 너비
+      height: 45, // SVG 아이콘 높이
     );
   }
 }
 
-class MeterialTopNavigationBar extends StatelessWidget implements PreferredSizeWidget {
+class MaterialTopNavigationBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 
@@ -199,9 +300,9 @@ class MeterialTopNavigationBar extends StatelessWidget implements PreferredSizeW
       backgroundColor: Colors.white,
       elevation: 0,
       leading: IconButton(
-        icon: _buildCustomItem(
+        icon: SvgPicture.asset(
           'assets/icon/back_icon.svg',
-          width: 17.375,  
+          width: 17.375,
           height: 18.688,
         ),
         onPressed: () {
@@ -211,24 +312,14 @@ class MeterialTopNavigationBar extends StatelessWidget implements PreferredSizeW
       centerTitle: true,
       actions: <Widget>[
         IconButton(
-          icon: _buildCustomItem(
+          icon: SvgPicture.asset(
             'assets/icon/setting.svg',
-            width: 17.363,  
-            height: 21.565, 
+            width: 40,
+            height: 28,
           ),
-          onPressed: () {
-            // 설정 버튼을 누른 뒤 다음 동작
-          },
+          onPressed: () {},
         ),
       ],
-    );
-  }
-
-  Widget _buildCustomItem(String iconPath, {required double width, required double height}) {
-    return SvgPicture.asset(
-      iconPath,
-      width: width,
-      height: height,
     );
   }
 }
