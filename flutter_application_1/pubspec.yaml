@@ -35,6 +35,7 @@ dependencies:
   table_calendar: ^3.0.0
   flutter_chart: ^0.1.6
   pie_chart: ^5.0.0
+  http: ^0.13.4
 
 
   # The following adds the Cupertino Icons font to your application.
