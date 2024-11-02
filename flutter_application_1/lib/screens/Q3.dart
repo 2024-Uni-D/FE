@@ -16,25 +16,16 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Center(
         child: Column(
           children: [
-            SizedBox(height: 40),
-            Text(
-              '로고',
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            SizedBox(height: 20),
+            SizedBox(height: 180),
             // 첫 번째 말풍선 - 오른쪽에 배치
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                  margin: EdgeInsets.only(right: 16),
+                  margin: EdgeInsets.only(right: 50),
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: Color(0xFF3254ED),
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(15),
                       topRight: Radius.circular(15),
@@ -56,11 +47,11 @@ class _ChatScreenState extends State<ChatScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(width: 16),
+                SizedBox(width: 50),
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
+                    color: Color(0xFF3254ED),
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(15),
                       topRight: Radius.circular(15),
@@ -69,7 +60,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   child: Icon(
                     Icons.more_horiz,
-                    color: Colors.grey.shade600,
+                    color: Colors.white,
                     size: 24,
                   ),
                 ),
@@ -86,7 +77,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 30),
+            SizedBox(height: 50),
             // 질문과 버튼
             Text(
               'Q3. $responder는 뭐라고 대답하실까?', // responder 변수를 사용해 동적 텍스트 표시
@@ -102,7 +93,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 // 버튼 눌렀을 때의 동작 추가
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+                backgroundColor: Color(0xFF3254ED),
                 padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),

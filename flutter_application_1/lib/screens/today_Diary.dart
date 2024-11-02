@@ -38,7 +38,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF9E79F),
+      backgroundColor: Colors.white,
       body: Center(
         child: Column(
           children: [
@@ -70,10 +70,12 @@ class _DiaryScreenState extends State<DiaryScreen> {
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: Colors.grey.shade300),
               ),
-              child: Scrollbar( // 스크롤바 추가
+              child: Scrollbar(
+                // 스크롤바 추가
                 thumbVisibility: true, // 항상 보여줌
                 radius: Radius.circular(20), // 스크롤바의 모서리 반경
-                child: SingleChildScrollView( // 스크롤 가능하게 만들기
+                child: SingleChildScrollView(
+                  // 스크롤 가능하게 만들기
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
