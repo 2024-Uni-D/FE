@@ -9,39 +9,54 @@ class MyDiaryScreen extends StatefulWidget {
 
 class _MyDiaryScreenState extends State<MyDiaryScreen> {
   DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay;
+
+  // 가상의 JSON 데이터를 Map 형태로 변환
+  Map<String, int> dayStatus = {
+    "2024-11-01": 0,
+    "2024-11-02": 1,
+    "2024-11-03": 2,
+  };
 
   // 포맷팅된 날짜를 가져오는 함수
   String getFormattedDate() {
     return DateFormat('MMMM yyyy').format(_focusedDay); // 예: October 2024
   }
 
+  // 각 날짜에 대해 강조 색상 반환 함수
+  Color getHighlightColor(DateTime day) {
+    String dayKey = DateFormat('yyyy-MM-dd').format(day);
+    int? status = dayStatus[dayKey];
+
+    switch (status) {
+      case 2:
+        return Color(0xFF4FE084); // 2일 경우 연두색
+      case 0:
+        return Color(0xFFF58282); // 0일 경우 빨간색
+      case 1:
+        return Color(0xFFD9D9D9); // 1일 경우 회색
+      default:
+        return Colors.transparent; // 상태가 없으면 투명
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFFF4CA),
+      backgroundColor: Colors.white,
       body: Center(
         child: Column(
           children: [
-            SizedBox(height: 40),
-            Text(
-              '로고',
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            SizedBox(height: 10),
+            SizedBox(height: 100),
             Text(
               'My Diary',
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 32,
                 fontStyle: FontStyle.italic,
-                color: Colors.black,
+                color: Color(0xFF3254ED),
               ),
             ),
             SizedBox(height: 20),
+            // 전체 흰색 배경을 감싸는 Container에 테두리 추가
             Container(
               width: 325,
               height: 400,
@@ -49,6 +64,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16.0),
+                border: Border.all(color: Colors.grey, width: 1.5),
               ),
               child: Column(
                 children: [
@@ -91,19 +107,11 @@ class _MyDiaryScreenState extends State<MyDiaryScreen> {
                   ),
                   Divider(color: Colors.grey),
                   SizedBox(height: 10),
+                  // 달력
                   TableCalendar(
                     firstDay: DateTime.utc(2000, 1, 1),
                     lastDay: DateTime.utc(2100, 12, 31),
                     focusedDay: _focusedDay,
-                    selectedDayPredicate: (day) {
-                      return isSameDay(_selectedDay, day);
-                    },
-                    onDaySelected: (selectedDay, focusedDay) {
-                      setState(() {
-                        _selectedDay = selectedDay;
-                        _focusedDay = focusedDay;
-                      });
-                    },
                     onPageChanged: (focusedDay) {
                       setState(() {
                         _focusedDay = focusedDay; // 스크롤된 월로 업데이트
@@ -117,13 +125,29 @@ class _MyDiaryScreenState extends State<MyDiaryScreen> {
                     }, // 월 단위로만 고정
                     calendarStyle: CalendarStyle(
                       todayDecoration: BoxDecoration(
-                        color: Colors.amber,
+                        color: getHighlightColor(DateTime.now()),
                         shape: BoxShape.circle,
                       ),
-                      selectedDecoration: BoxDecoration(
-                        color: Colors.orange,
-                        shape: BoxShape.circle,
-                      ),
+                      outsideDaysVisible: false, // 월에 포함되지 않는 날 표시 안 함
+                      todayTextStyle:
+                          TextStyle(color: Colors.black), // 오늘 날짜의 텍스트 스타일 검정색
+                    ),
+                    calendarBuilders: CalendarBuilders(
+                      defaultBuilder: (context, day, focusedDay) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: getHighlightColor(day), // 강조 색상 설정
+                            shape: BoxShape.circle,
+                          ),
+                          margin: EdgeInsets.all(4.0),
+                          alignment: Alignment.center,
+                          child: Text(
+                            day.day.toString(),
+                            style: TextStyle(
+                                color: Colors.black), // 모든 날짜의 폰트 색상 검정색
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],
