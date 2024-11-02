@@ -6,6 +6,9 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  // 예시로 백엔드에서 받아온 정보를 가정하여 responder 변수를 설정
+  String responder = "엄마"; // 실제로는 백엔드에서 받아온 데이터로 설정
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,7 +89,7 @@ class _ChatScreenState extends State<ChatScreen> {
             SizedBox(height: 30),
             // 질문과 버튼
             Text(
-              'Q3. 우리 엄마는 뭐라고 대답하실까?',
+              'Q3. $responder는 뭐라고 대답하실까?', // responder 변수를 사용해 동적 텍스트 표시
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
