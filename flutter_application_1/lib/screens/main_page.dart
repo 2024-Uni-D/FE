@@ -122,7 +122,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                   Spacer(),
                   ElevatedButton(
                     onPressed: () async {
-                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
                       await prefs.setBool('hasSeenPopup', true);
                       Navigator.of(context).pop();
                     },
@@ -217,7 +218,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       ),
       bottomNavigationBar: Container(
         width: 360.0,
-        height: 84.0,
+        height: 106.0,
         decoration: BoxDecoration(
           color: Color(0xFF3254ED),
           borderRadius: BorderRadius.only(
@@ -240,27 +241,16 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
           child: BottomNavigationBar(
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
-                icon: _buildCustomItem(
-                  'assets/icon/diary.svg',
-                  'assets/icon/diary_selected.svg',
-                  index: 0,
-                ),
+                icon: _buildNavItem('assets/icon/diary.svg', 'Diary', 0),
                 label: '',
               ),
               BottomNavigationBarItem(
-                icon: _buildCustomItem(
-                  'assets/icon/home_icon.svg',
-                  'assets/icon/home_icon_selected.svg',
-                  index: 1,
-                ),
+                icon: _buildNavItem('assets/icon/home_icon.svg', 'Home', 1),
                 label: '',
               ),
               BottomNavigationBarItem(
-                icon: _buildCustomItem(
-                  'assets/icon/profile_icon.svg',
-                  'assets/icon/profile_icon_selected.svg',
-                  index: 2,
-                ),
+                icon:
+                    _buildNavItem('assets/icon/profile_icon.svg', 'Profile', 2),
                 label: '',
               ),
             ],
@@ -281,16 +271,39 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     );
   }
 
-  Widget _buildCustomItem(String assetPath, String selectedAssetPath, {required int index}) {
-    return SvgPicture.asset(
-      _selectedIndex == index ? selectedAssetPath : assetPath,
-      width: 45, // SVG 아이콘 너비
-      height: 45, // SVG 아이콘 높이
+  Widget _buildNavItem(String assetPath, String label, int index) {
+    return Container(
+      decoration: BoxDecoration(
+        color: _selectedIndex == index ? Colors.white : Colors.transparent,
+        shape: BoxShape.circle,
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+            assetPath,
+            color: _selectedIndex == index ? Color(0xFF3254ED) : Colors.white70,
+            width: 30,
+            height: 30,
+          ),
+          SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color:
+                  _selectedIndex == index ? Color(0xFF3254ED) : Colors.white70,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
-class MaterialTopNavigationBar extends StatelessWidget implements PreferredSizeWidget {
+class MaterialTopNavigationBar extends StatelessWidget
+    implements PreferredSizeWidget {
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 
