@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Q1Screen extends StatefulWidget {
   @override
@@ -8,6 +10,34 @@ class Q1Screen extends StatefulWidget {
 
 class _Q1ScreenState extends State<Q1Screen> {
   int? selectedOption;
+
+  Future<void> submitSelection() async {
+    if (selectedOption == null) return;
+
+    // API URL을 실제 서버 URL로 변경하세요
+    // final url = Uri.parse('http://127.0.0.1:8001/prequestion/tts');
+    final url = Uri.parse('http://10.0.2.2:8001/prequestion/tts');
+
+    final ttsVersion = (selectedOption ?? 1) - 1;
+
+    // 요청에 필요한 헤더와 JSON 본문을 설정합니다.
+    final response = await http.put(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'id': 1, // 사용자 ID 또는 다른 고유 식별자를 필요에 따라 설정
+        'tts_ver': ttsVersion,
+      }),
+    );
+
+    // 서버의 응답을 처리합니다.
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+      print(responseBody['message']); // 성공 메시지 출력
+    } else {
+      print('Failed to update TTS version: ${response.statusCode}');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +56,7 @@ class _Q1ScreenState extends State<Q1Screen> {
                 mainAxisSpacing: 16,
                 crossAxisSpacing: 16,
                 children: [
-                  _buildOption(1,
-                      svgPath: 'assets/icon/mother.svg', text: '엄마'),
+                  _buildOption(1, iconData: Icons.woman, text: '엄마'),
                   _buildOption(2, iconData: Icons.man, text: '아빠'),
                   _buildOption(3, iconData: Icons.group, text: '친구(여성)'),
                   _buildOption(4, iconData: Icons.group, text: '친구(남성)'),
@@ -46,11 +75,7 @@ class _Q1ScreenState extends State<Q1Screen> {
               ),
               SizedBox(height: 30),
               ElevatedButton(
-                onPressed: () {
-                  if (selectedOption != null) {
-                    print("선택한 옵션: $selectedOption");
-                  }
-                },
+                onPressed: submitSelection, // 서버에 선택 항목을 전송하는 함수 호출
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF3254ED),
                   padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),

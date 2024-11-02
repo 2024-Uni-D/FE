@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Q2Screen extends StatefulWidget {
   @override
@@ -8,6 +10,53 @@ class Q2Screen extends StatefulWidget {
 
 class _Q2ScreenState extends State<Q2Screen> {
   Set<int> selectedOptions = Set();
+
+  Future<void> submitSelection() async {
+    if (selectedOptions.isEmpty) return;
+
+    final url = Uri.parse('http://10.0.2.2:8001/prequestion/apply1');
+    // final url = Uri.parse('http://127.0.0.1:8001/prequestion/apply1');
+
+    // 선택된 옵션들을 콤마로 구분된 문자열로 변환
+    String favorite1 = selectedOptions.map((option) {
+      switch (option) {
+        case 1:
+          return "영화";
+        case 2:
+          return "음악";
+        case 3:
+          return "전시회";
+        case 4:
+          return "독서";
+        default:
+          return "";
+      }
+    }).join(", ");
+
+    // 전송할 JSON 본문을 미리 확인
+    final requestBody = jsonEncode({
+      'id': 0, // 고유 사용자 ID 필요 시 변경
+      'favorite1': favorite1,
+    });
+    print('Sending request body: $requestBody');
+    print('Request body type: ${requestBody.runtimeType}');
+
+    final response = await http.put(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'id': 1, // 고유 사용자 ID 필요 시 변경
+        'favorite1': favorite1,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+      print(responseBody['message']);
+    } else {
+      print('Failed to update favorite1: ${response.statusCode}');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,9 +94,7 @@ class _Q2ScreenState extends State<Q2Screen> {
               ),
               SizedBox(height: 30),
               ElevatedButton(
-                onPressed: () {
-                  print("선택한 옵션: $selectedOptions");
-                },
+                onPressed: submitSelection,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF3254ED),
                   padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
@@ -58,7 +105,6 @@ class _Q2ScreenState extends State<Q2Screen> {
                 child: Text(
                   '다음으로',
                   style: TextStyle(
-                    fontFamily: 'CustomFont',
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
@@ -101,21 +147,18 @@ class _Q2ScreenState extends State<Q2Screen> {
         ),
         child: Stack(
           children: [
-            // 오른쪽 위 텍스트를 중앙에 가깝게 이동하고 스타일 조정
             Positioned(
               top: 28,
               right: 28,
               child: Text(
                 text,
                 style: TextStyle(
-                  fontFamily: 'CustomFont',
-                  fontSize: 18, // 글씨 크기
-                  fontWeight: FontWeight.bold, // 글씨 굵게
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                   color: isSelected ? Colors.white : Colors.black87,
                 ),
               ),
             ),
-            // 왼쪽 아래 아이콘을 중앙에 가깝게 이동
             Positioned(
               bottom: 28,
               left: 28,
