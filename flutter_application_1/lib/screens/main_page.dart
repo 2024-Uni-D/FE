@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart'; // 로케일 초기화를 위한 패키지
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('ko'); // 'ko' 로케일 초기화
+  runApp(MaterialApp(
+    home: CustomBottomNavigationBar(),
+  ));
+}
 
 class CustomBottomNavigationBar extends StatefulWidget {
   @override
-  _CustomBottomNavigationBarState createState() => _CustomBottomNavigationBarState();
+  _CustomBottomNavigationBarState createState() =>
+      _CustomBottomNavigationBarState();
 }
 
 class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
@@ -13,6 +24,13 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  // 오늘 날짜를 가져오는 함수
+  String getCurrentDate() {
+    final now = DateTime.now();
+    final formatter = DateFormat('yyyy.MM.dd (E)', 'ko'); // 예: 2024.11.03 (토)
+    return formatter.format(now);
   }
 
   @override
@@ -33,7 +51,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "2024.11.03 (토) \n오늘의 일기를 기록해볼까요?",
+                "${getCurrentDate()} \n오늘의 일기를 기록해볼까요?",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 20,
@@ -60,7 +78,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                 height: 100,
               ),
               SizedBox(height: 100),
-              Center( // 버튼을 가운데 정렬
+              Center(
+                // 버튼을 가운데 정렬
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFE2C86E),
@@ -172,10 +191,4 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: CustomBottomNavigationBar(),
-  ));
 }
