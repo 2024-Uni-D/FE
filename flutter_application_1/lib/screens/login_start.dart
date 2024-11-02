@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../api/auth_api.dart'; // AuthAPI import 추가
 import '../models/userL.dart'; // UserL import 추가
+import '../screens/join_start.dart'; // join_start 화면 import 추가
+import '../screens/Q1.dart'; // Q1 화면 import 추가
 
 class LoginStartPageScreen extends StatefulWidget {
   @override
@@ -33,9 +35,40 @@ class _LoginStartPageScreenState extends State<LoginStartPageScreen> {
     try {
       await authAPI.loginUser(user);
       print("로그인 성공!");
+
+      // 로그인 성공 시 Q1 페이지로 이동
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Q1Screen()), // Q1Screen으로 네비게이션
+      );
     } catch (e) {
       print("로그인 실패: $e");
+      // 로그인 실패 시 오류 메시지를 보여줄 수도 있음
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("로그인 실패"),
+          content: Text("아이디 또는 비밀번호를 확인하세요."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text("확인"),
+            ),
+          ],
+        ),
+      );
     }
+  }
+
+  void _navigateToJoinScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) =>
+              JoinStartPageScreen()), // JoinStartScreen으로 네비게이션
+    );
   }
 
   @override
@@ -107,13 +140,31 @@ class _LoginStartPageScreenState extends State<LoginStartPageScreen> {
                 onPressed: _loginUser, // 로그인 버튼 클릭 시 _loginUser 호출
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF3254ED),
-                  padding: EdgeInsets.symmetric(horizontal: 153, vertical: 15),
+                  padding: EdgeInsets.symmetric(horizontal: 150, vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
                 child: Text(
                   '로그인',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: _navigateToJoinScreen, // 회원가입 버튼 클릭 시 화면 전환 함수 호출
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF3254ED),
+                  padding: EdgeInsets.symmetric(horizontal: 145, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                child: Text(
+                  '회원가입',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

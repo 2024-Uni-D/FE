@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'Q2.dart';
 
 class Q1Screen extends StatefulWidget {
   @override
@@ -15,7 +16,6 @@ class _Q1ScreenState extends State<Q1Screen> {
     if (selectedOption == null) return;
 
     // API URL을 실제 서버 URL로 변경하세요
-    // final url = Uri.parse('http://127.0.0.1:8001/prequestion/tts');
     final url = Uri.parse('http://10.0.2.2:8001/prequestion/tts');
 
     final ttsVersion = (selectedOption ?? 1) - 1;
@@ -34,6 +34,12 @@ class _Q1ScreenState extends State<Q1Screen> {
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
       print(responseBody['message']); // 성공 메시지 출력
+
+      // Q2Screen으로 이동
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Q2Screen()),
+      );
     } else {
       print('Failed to update TTS version: ${response.statusCode}');
     }

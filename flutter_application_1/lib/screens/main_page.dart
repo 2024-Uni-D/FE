@@ -41,7 +41,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   bool _hasSeenPopup = false;
   final Color popupBorderColor = Color(0xFFDE2A3D).withOpacity(0.4);
   final AuthAPI authAPI = AuthAPI(); // AuthAPI 인스턴스 생성
-  String username = "username";  // 기본값 설정
+  String username = "username"; // 기본값 설정
 
   @override
   void initState() {
