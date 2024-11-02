@@ -115,6 +115,7 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -444,6 +445,7 @@ packages:
       sha256: "5c5f338a667b4c644744b661f309fb8080bb94b18a7e91ef1dbd343bed00ed6d"
       url: "https://pub.dev"
     source: hosted
+
     version: "14.2.5"
   web:
     dependency: transitive
@@ -470,5 +472,7 @@ packages:
     source: hosted
     version: "6.5.0"
 sdks:
+
   dart: ">=3.5.0 <4.0.0"
   flutter: ">=3.22.0"
+

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../api/auth_api.dart'; // AuthAPI import 추가
+import '../models/user.dart';
 
 class JoinStartPageScreen extends StatefulWidget {
   @override
@@ -6,7 +8,43 @@ class JoinStartPageScreen extends StatefulWidget {
 }
 
 class _JoinStartPageScreenState extends State<JoinStartPageScreen> {
+  final AuthAPI authAPI = AuthAPI();
+
+  // 각 입력 필드를 위한 컨트롤러
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController userIdController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   DateTime? selectedDate;
+
+  @override
+  void dispose() {
+    // 컨트롤러 해제
+    nameController.dispose();
+    userIdController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  void _registerUser() async {
+    // User 객체 생성
+    final user = User(
+      userId: userIdController.text,
+      password: passwordController.text,
+      name: nameController.text,
+      birthday: selectedDate != null
+          ? '${selectedDate!.year}-${selectedDate!.month}-${selectedDate!.day}'
+          : '',
+    );
+
+    // 회원가입 요청 실행
+    try {
+      await authAPI.registerUser(user);
+      print("회원가입에 성공했습니다!");
+    } catch (e) {
+      // 실패 시 콘솔에 오류 메시지 출력
+      print("회원가입에 실패했습니다: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,17 +65,14 @@ class _JoinStartPageScreenState extends State<JoinStartPageScreen> {
                 ),
               ),
               SizedBox(height: 40),
-              buildInputField('이름'),
-              buildInputField('아이디'),
-              buildInputField('비밀번호'),
+              buildInputField('이름', controller: nameController),
+              buildInputField('아이디', controller: userIdController),
+              buildInputField('비밀번호', controller: passwordController, isPassword: true),
               buildInputField('생년월일', isDateField: true),
               SizedBox(height: 30),
-              // 회원가입 버튼 그대로 유지
               Center(
                 child: ElevatedButton(
-                  onPressed: () {
-                    // 회원가입 버튼 눌렀을 때의 동작 추가
-                  },
+                  onPressed: _registerUser, // 회원가입 버튼 클릭 시 _registerUser 호출
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF3254ED),
                     padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
@@ -62,7 +97,8 @@ class _JoinStartPageScreenState extends State<JoinStartPageScreen> {
   }
 
   // 입력 필드 생성 함수 (생년월일 필드일 때와 아닐 때를 구분)
-  Widget buildInputField(String label, {bool isDateField = false}) {
+  Widget buildInputField(String label,
+      {TextEditingController? controller, bool isDateField = false, bool isPassword = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20.0),
       child: Column(
@@ -74,6 +110,8 @@ class _JoinStartPageScreenState extends State<JoinStartPageScreen> {
           ),
           SizedBox(height: 0),
           TextField(
+            controller: controller,
+            obscureText: isPassword, // 비밀번호 필드일 때 텍스트 가리기 설정
             readOnly: isDateField, // 생년월일 필드일 때만 읽기 전용 설정
             onTap: isDateField
                 ? () async {
