@@ -115,7 +115,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                   ),
                   SizedBox(height: 20),
                   Text(
-                    '이제 집에 들어가는 순간 <앱이름>이 username을 반겨줄 거예요',
+                    '이제 집에 들어가는 순간 <앱이름>이 username을 반겨줄 거예요', //username -> retrieveUse메소드로 이름 불러오기
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 16),
                   ),
