@@ -12,7 +12,7 @@ class _Q1ScreenState extends State<Q1Screen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF9E79F),
+      backgroundColor: Colors.white,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(32.0),
@@ -52,17 +52,17 @@ class _Q1ScreenState extends State<Q1Screen> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFE2C86E),
+                  backgroundColor: Color(0xFF3254ED),
                   padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
                 child: Text(
-                  '결정',
+                  '다음으로',
                   style: TextStyle(
                     fontFamily: 'CustomFont',
-                    color: Colors.black,
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -76,6 +76,7 @@ class _Q1ScreenState extends State<Q1Screen> {
 
   Widget _buildOption(int value,
       {String? svgPath, IconData? iconData, required String text}) {
+    bool isSelected = selectedOption == value;
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -84,11 +85,11 @@ class _Q1ScreenState extends State<Q1Screen> {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isSelected ? Color(0xFF3254ED) : Colors.white,
           borderRadius: BorderRadius.circular(8.0),
           border: Border.all(
-            color: selectedOption == value ? Colors.blue : Colors.grey,
-            width: selectedOption == value ? 2 : 1,
+            color: isSelected ? Color(0xFF3254ED) : Colors.grey,
+            width: isSelected ? 2 : 1,
           ),
           boxShadow: [
             BoxShadow(
@@ -106,16 +107,18 @@ class _Q1ScreenState extends State<Q1Screen> {
                     svgPath,
                     width: 40,
                     height: 40,
-                    color: Colors.black54,
+                    color: isSelected ? Colors.white : Colors.black54,
                   )
-                : Icon(iconData, size: 40, color: Colors.black54),
+                : Icon(iconData,
+                    size: 40,
+                    color: isSelected ? Colors.white : Colors.black54),
             SizedBox(height: 8),
             Text(
               text,
               style: TextStyle(
                 fontFamily: 'CustomFont',
                 fontSize: 16,
-                color: Colors.black87,
+                color: isSelected ? Colors.white : Colors.black87,
               ),
             ),
           ],

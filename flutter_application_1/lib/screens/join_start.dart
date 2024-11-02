@@ -7,12 +7,11 @@ class JoinStartPageScreen extends StatefulWidget {
 
 class _JoinStartPageScreenState extends State<JoinStartPageScreen> {
   DateTime? selectedDate;
-  bool isSelectedCal = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF9E79F),
+      backgroundColor: Colors.white,
       body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(32.0),
@@ -31,25 +30,16 @@ class _JoinStartPageScreenState extends State<JoinStartPageScreen> {
               buildInputField('이름'),
               buildInputField('아이디'),
               buildInputField('비밀번호'),
-              SizedBox(height: 20),
-              CalButton(
-                onDateSelected: (date) {
-                  setState(() {
-                    selectedDate = date;
-                    isSelectedCal = true;
-                  });
-                },
-                isSelected: isSelectedCal,
-                selectedDate: selectedDate,
-              ),
+              buildInputField('생년월일', isDateField: true),
               SizedBox(height: 30),
+              // 회원가입 버튼 그대로 유지
               Center(
                 child: ElevatedButton(
                   onPressed: () {
                     // 회원가입 버튼 눌렀을 때의 동작 추가
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFE2C86E),
+                    backgroundColor: Color(0xFF3254ED),
                     padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
@@ -58,7 +48,7 @@ class _JoinStartPageScreenState extends State<JoinStartPageScreen> {
                   child: Text(
                     '회원가입',
                     style: TextStyle(
-                      color: Colors.black,
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -71,8 +61,8 @@ class _JoinStartPageScreenState extends State<JoinStartPageScreen> {
     );
   }
 
-  // 입력 필드 생성 함수
-  Widget buildInputField(String label) {
+  // 입력 필드 생성 함수 (생년월일 필드일 때와 아닐 때를 구분)
+  Widget buildInputField(String label, {bool isDateField = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20.0),
       child: Column(
@@ -80,77 +70,43 @@ class _JoinStartPageScreenState extends State<JoinStartPageScreen> {
         children: [
           Text(
             '* $label',
-            style: TextStyle(color: Colors.grey[700]),
+            style: TextStyle(color: Color(0xFF3254ED)),
           ),
-          SizedBox(height: 8),
+          SizedBox(height: 0),
           TextField(
+            readOnly: isDateField, // 생년월일 필드일 때만 읽기 전용 설정
+            onTap: isDateField
+                ? () async {
+                    // 생년월일 필드를 누르면 날짜 선택기 열기
+                    final DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: selectedDate ?? DateTime.now(),
+                      firstDate: DateTime(1950),
+                      lastDate: DateTime.now(),
+                    );
+                    if (pickedDate != null) {
+                      setState(() {
+                        selectedDate = pickedDate;
+                      });
+                    }
+                  }
+                : null,
             decoration: InputDecoration(
-              border: UnderlineInputBorder(),
-              hintText: '$label을(를) 입력해주세요',
+              border: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.blue),
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.blue),
+              ),
+              hintText: isDateField
+                  ? (selectedDate != null
+                      ? '${selectedDate!.year}-${selectedDate!.month}-${selectedDate!.day}'
+                      : 'ex) 20XX.MM.YY')
+                  : '',
+              hintStyle: TextStyle(color: Colors.grey),
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// 캘린더 버튼 클래스
-class CalButton extends StatelessWidget {
-  final Function(DateTime) onDateSelected;
-  final bool isSelected;
-  final DateTime? selectedDate;
-
-  const CalButton({
-    Key? key,
-    required this.onDateSelected,
-    required this.isSelected,
-    this.selectedDate,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () async {
-        final DateTime? pickedDate = await showDatePicker(
-          context: context,
-          initialDate: selectedDate ?? DateTime.now(),
-          firstDate: DateTime(1950),
-          lastDate: DateTime.now(),
-        );
-        if (pickedDate != null) {
-          onDateSelected(pickedDate);
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Color(0xffFFF4CA),
-      ),
-      child: Container(
-        width: 340,
-        height: 65,
-        decoration: BoxDecoration(
-          color: Color(0xffFFF4CA),
-          borderRadius: BorderRadius.all(Radius.circular(80)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.calendar_today,
-              color: Color(0xff000000),
-            ),
-            SizedBox(width: 10),
-            Text(
-              isSelected ? '${selectedDate!.year}-${selectedDate!.month}-${selectedDate!.day}' : '생년월일',
-              style: TextStyle(
-                color: Color(0xff000000),
-                fontSize: 16,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
       ),
     );
   }

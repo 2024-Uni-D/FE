@@ -8,7 +8,7 @@ class ChattingToday extends StatefulWidget {
 }
 
 class _ChattingTodayState extends State<ChattingToday> {
-  // 예시용 메시지 리스트
+  // 예시 채팅 데이터
   List<Map<String, dynamic>> messages = [
     {"text": "안녕하세요!", "isMine": false},
     {"text": "오늘은 무엇을 도와드릴까요?", "isMine": false},
@@ -16,9 +16,11 @@ class _ChattingTodayState extends State<ChattingToday> {
     {"text": "네, 어떻게 도와드릴까요?", "isMine": false},
     {"text": "네, 어떻게 도와드릴까요?", "isMine": false},
     {"text": "네, 어떻게 도와드릴까요?", "isMine": false},
-    {"text": "네, 어떻게 도와드릴까요?", "isMine": true},
     {"text": "네, 어떻게 도와드릴까요?", "isMine": false},
     {"text": "네, 어떻게 도와드릴까요?", "isMine": false},
+    {"text": "안녕하세요, 문의드립니다.", "isMine": true},
+    {"text": "안녕하세요, 문의드립니다.", "isMine": true},
+    {"text": "안녕하세요, 문의드립니다.", "isMine": true},
   ];
 
   // 오늘 날짜를 가져오는 함수
@@ -31,148 +33,67 @@ class _ChattingTodayState extends State<ChattingToday> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF9E79F),
-      body: Center(
-        child: Column(
-          children: [
-            SizedBox(height: 40),
-            Text(
-              '로고',
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
+      backgroundColor: Colors.white,
+      body: Column(
+        children: [
+          SizedBox(height: 40),
+          Text(
+            getCurrentDate(),
+            style: TextStyle(
+              color: Colors.black87,
+              fontSize: 14,
             ),
-            SizedBox(height: 20),
-            Expanded(
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 16),
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Color(0xFFF9E79F),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      getCurrentDate(),
+          ),
+          SizedBox(height: 20),
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              itemCount: messages.length,
+              itemBuilder: (context, index) {
+                final message = messages[index];
+                final bool isMine = message["isMine"];
+                return Align(
+                  alignment:
+                      isMine ? Alignment.centerRight : Alignment.centerLeft,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                    margin: EdgeInsets.only(
+                      bottom: 10,
+                      left: isMine ? 50 : 0,
+                      right: isMine ? 0 : 50,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isMine ? Color(0xFF3254ED) : Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(15),
+                        topRight: Radius.circular(15),
+                        bottomLeft:
+                            isMine ? Radius.circular(15) : Radius.circular(0),
+                        bottomRight:
+                            isMine ? Radius.circular(0) : Radius.circular(15),
+                      ),
+                      border: isMine
+                          ? null
+                          : Border.all(
+                              color: Color(0xFF3254ED),
+                              width: 1.5), // 회색 말풍선 테두리 추가
+                    ),
+                    child: Text(
+                      message["text"],
                       style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 14,
+                        color: isMine ? Colors.white : Colors.black87,
+                        fontSize: 16,
                       ),
                     ),
-                    SizedBox(height: 10),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: messages.length,
-                        itemBuilder: (context, index) {
-                          final message = messages[index];
-                          final bool isSameSender = index > 0 &&
-                              messages[index - 1]["isMine"] ==
-                                  message["isMine"];
-
-                          return Padding(
-                            padding: EdgeInsets.only(
-                              top: isSameSender ? 4.0 : 12.0, // 간격 조절
-                              bottom: 4.0,
-                            ),
-                            child: Align(
-                              alignment: message["isMine"]
-                                  ? Alignment.centerRight
-                                  : Alignment.centerLeft,
-                              child: CustomPaint(
-                                painter: ChatBubblePainter(
-                                  color: message["isMine"]
-                                      ? Colors.blue[100]!
-                                      : Colors.grey[300]!,
-                                  alignment: message["isMine"]
-                                      ? Alignment.centerRight
-                                      : Alignment.centerLeft,
-                                ),
-                                child: Container(
-                                  margin: EdgeInsets.symmetric(vertical: 4),
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 14),
-                                  child: Text(
-                                    message["text"],
-                                    style: TextStyle(
-                                      color: Colors.black87,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFFE2C86E),
-                padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-              child: Text(
-                '종료',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-          ],
-        ),
+          ),
+          SizedBox(height: 100), // 네비게이션 바가 들어갈 공간 확보
+        ],
       ),
     );
-  }
-}
-
-class ChatBubblePainter extends CustomPainter {
-  final Color color;
-  final Alignment alignment;
-
-  ChatBubblePainter({required this.color, required this.alignment});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = color;
-    final rrect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(0, 0, size.width, size.height),
-      Radius.circular(16),
-    );
-    canvas.drawRRect(rrect, paint);
-
-    // 뾰족한 부분 그리기
-    final path = Path();
-    if (alignment == Alignment.centerRight) {
-      path.moveTo(size.width, size.height / 2);
-      path.lineTo(size.width + 10, size.height / 2 - 5);
-      path.lineTo(size.width, size.height / 2 - 10);
-    } else {
-      path.moveTo(0, size.height / 2);
-      path.lineTo(-10, size.height / 2 - 5);
-      path.lineTo(0, size.height / 2 - 10);
-    }
-    path.close();
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(ChatBubblePainter oldDelegate) {
-    return color != oldDelegate.color || alignment != oldDelegate.alignment;
   }
 }
 
