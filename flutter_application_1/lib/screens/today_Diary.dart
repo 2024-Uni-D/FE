@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import '../api/auth_api.dart';
 
 class DiaryScreen extends StatefulWidget {
   @override
@@ -9,10 +10,30 @@ class DiaryScreen extends StatefulWidget {
 }
 
 class _DiaryScreenState extends State<DiaryScreen> {
-  // 예시 데이터 (백엔드에서 가져온다고 가정)
-  String username = "username"; // 사용자 이름
+  final AuthAPI authAPI = AuthAPI(); // AuthAPI 인스턴스 생성
+  String username = "username";  // 서버에서 받아올 이름
   String summary = "오늘의 대화 요약 내용이 여기에 표시됩니다."; // 대화 요약
   int mood = 2; // 0: Positive, 1: Negative, 2: Soso
+
+  @override
+  void initState() {
+    super.initState();
+    _retrieveUsername(); // 화면이 초기화될 때 사용자 이름 불러오기
+  }
+
+  // 서버에서 사용자 이름을 가져오는 메서드
+  Future<void> _retrieveUsername() async {
+    int userId = 1; // 예시로 설정한 ID, 실제로는 필요한 ID로 변경
+    String? retrievedName = await authAPI.retrieveUser(userId);
+
+    if (retrievedName != null) {
+      setState(() {
+        username = retrievedName;
+      });
+    } else {
+      print("사용자 이름을 불러오지 못했습니다.");
+    }
+  }
 
   // 오늘 날짜 가져오기
   String getCurrentDate() {
@@ -61,8 +82,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
             ),
             SizedBox(height: 20),
             Container(
-              width: 325, // 너비 설정
-              height: 400, // 높이 설정
+              width: 325,
+              height: 400,
               margin: EdgeInsets.symmetric(horizontal: 16),
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -71,11 +92,9 @@ class _DiaryScreenState extends State<DiaryScreen> {
                 border: Border.all(color: Colors.grey.shade300),
               ),
               child: Scrollbar(
-                // 스크롤바 추가
-                thumbVisibility: true, // 항상 보여줌
-                radius: Radius.circular(20), // 스크롤바의 모서리 반경
+                thumbVisibility: true,
+                radius: Radius.circular(20),
                 child: SingleChildScrollView(
-                  // 스크롤 가능하게 만들기
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -88,7 +107,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                               fontSize: 16,
                             ),
                           ),
-                          SizedBox(width: 110), // SVG와의 간격 조정
+                          SizedBox(width: 110),
                           SvgPicture.asset(
                             getMoodSvgPath(),
                             width: 24,
@@ -108,7 +127,6 @@ class _DiaryScreenState extends State<DiaryScreen> {
                         ),
                       ),
                       SizedBox(height: 8),
-                      // 여러 줄의 텍스트 추가
                       for (int i = 0; i < 20; i++)
                         Text(
                           summary,
