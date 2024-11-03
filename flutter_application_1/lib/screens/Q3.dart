@@ -1,13 +1,13 @@
+// Q3.dart
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'main_page.dart'; // main_page.dart 파일을 import
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart'; // 여기서는 initializeDateFormatting 필요 없음
 import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await initializeDateFormatting(); // 로케일 데이터 초기화
+  await initializeDateFormatting(); // 여기에 추가
   runApp(MaterialApp(
     home: ChatScreen(),
   ));
@@ -68,7 +68,6 @@ class _ChatScreenState extends State<ChatScreen> {
             String responder = "알 수 없음";
 
             if (snapshot.connectionState == ConnectionState.done) {
-              // 데이터가 성공적으로 로드된 경우
               if (snapshot.hasData) {
                 responder = snapshot.data!;
               }
@@ -149,7 +148,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
-                    // main_page.dart로 화면 전환
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => HomeScreen()),

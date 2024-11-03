@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import '../api/auth_api.dart'; // AuthAPI import 추가
-import '../models/userL.dart'; // UserL import 추가
-import '../screens/join_start.dart'; // join_start 화면 import 추가
-import '../screens/Q1.dart'; // Q1 화면 import 추가
+import 'package:flutter_svg/flutter_svg.dart'; // SVG 패키지 추가
+import '../api/auth_api.dart';
+import '../models/userL.dart';
+import '../screens/join_start.dart';
+import '../screens/Q1.dart';
 
 class LoginStartPageScreen extends StatefulWidget {
   @override
@@ -11,39 +12,31 @@ class LoginStartPageScreen extends StatefulWidget {
 
 class _LoginStartPageScreenState extends State<LoginStartPageScreen> {
   final AuthAPI authAPI = AuthAPI();
-
-  // 각 입력 필드를 위한 컨트롤러
   final TextEditingController userIdController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   @override
   void dispose() {
-    // 컨트롤러 해제
     userIdController.dispose();
     passwordController.dispose();
     super.dispose();
   }
 
   void _loginUser() async {
-    // UserL 객체 생성
     final user = UserL(
       userId: userIdController.text,
       password: passwordController.text,
     );
 
-    // 로그인 요청 실행
     try {
       await authAPI.loginUser(user);
       print("로그인 성공!");
-
-      // 로그인 성공 시 Q1 페이지로 이동
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Q1Screen()), // Q1Screen으로 네비게이션
+        MaterialPageRoute(builder: (context) => Q1Screen()),
       );
     } catch (e) {
       print("로그인 실패: $e");
-      // 로그인 실패 시 오류 메시지를 보여줄 수도 있음
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -65,9 +58,7 @@ class _LoginStartPageScreenState extends State<LoginStartPageScreen> {
   void _navigateToJoinScreen() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) =>
-              JoinStartPageScreen()), // JoinStartScreen으로 네비게이션
+      MaterialPageRoute(builder: (context) => JoinStartPageScreen()),
     );
   }
 
@@ -81,13 +72,10 @@ class _LoginStartPageScreenState extends State<LoginStartPageScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Text(
-                'LOGO',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
+              SvgPicture.asset(
+                'assets/icon/Logo.svg', // SVG 로고 파일 경로
+                width: 100, // 로고 크기 설정
+                height: 100,
               ),
               SizedBox(height: 40),
               Column(
@@ -137,7 +125,7 @@ class _LoginStartPageScreenState extends State<LoginStartPageScreen> {
               ),
               SizedBox(height: 50),
               ElevatedButton(
-                onPressed: _loginUser, // 로그인 버튼 클릭 시 _loginUser 호출
+                onPressed: _loginUser,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF3254ED),
                   padding: EdgeInsets.symmetric(horizontal: 150, vertical: 15),
@@ -155,7 +143,7 @@ class _LoginStartPageScreenState extends State<LoginStartPageScreen> {
               ),
               SizedBox(height: 10),
               ElevatedButton(
-                onPressed: _navigateToJoinScreen, // 회원가입 버튼 클릭 시 화면 전환 함수 호출
+                onPressed: _navigateToJoinScreen,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF3254ED),
                   padding: EdgeInsets.symmetric(horizontal: 145, vertical: 15),

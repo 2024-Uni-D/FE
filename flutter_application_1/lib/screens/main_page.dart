@@ -180,13 +180,10 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text(
-              'LOGO',
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
+            SvgPicture.asset(
+              'assets/icon/Logo.svg',
+              width: 100, // 적절한 크기로 설정하세요
+              height: 100,
             ),
             SizedBox(height: 20),
             Container(
