@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
+import 'main_page.dart'; // main_page import 추가
+import 'profile_page.dart'; // EmotionChart import 추가
 
 class MyDiaryScreen extends StatefulWidget {
   @override
@@ -56,7 +59,6 @@ class _MyDiaryScreenState extends State<MyDiaryScreen> {
               ),
             ),
             SizedBox(height: 20),
-            // 전체 흰색 배경을 감싸는 Container에 테두리 추가
             Container(
               width: 325,
               height: 400,
@@ -68,7 +70,6 @@ class _MyDiaryScreenState extends State<MyDiaryScreen> {
               ),
               child: Column(
                 children: [
-                  // 달력 위에 화살표 버튼과 날짜 텍스트
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -107,44 +108,41 @@ class _MyDiaryScreenState extends State<MyDiaryScreen> {
                   ),
                   Divider(color: Colors.grey),
                   SizedBox(height: 10),
-                  // 달력
                   TableCalendar(
                     firstDay: DateTime.utc(2000, 1, 1),
                     lastDay: DateTime.utc(2100, 12, 31),
                     focusedDay: _focusedDay,
                     onPageChanged: (focusedDay) {
                       setState(() {
-                        _focusedDay = focusedDay; // 스크롤된 월로 업데이트
+                        _focusedDay = focusedDay;
                       });
                     },
-                    calendarFormat: CalendarFormat.month, // 월 단위로만 표시
-                    headerVisible: false, // 기본 상단 헤더 숨김
-                    daysOfWeekVisible: true, // 요일 행 표시
+                    calendarFormat: CalendarFormat.month,
+                    headerVisible: false,
+                    daysOfWeekVisible: true,
                     availableCalendarFormats: const {
                       CalendarFormat.month: 'Month'
-                    }, // 월 단위로만 고정
+                    },
                     calendarStyle: CalendarStyle(
                       todayDecoration: BoxDecoration(
                         color: getHighlightColor(DateTime.now()),
                         shape: BoxShape.circle,
                       ),
-                      outsideDaysVisible: false, // 월에 포함되지 않는 날 표시 안 함
-                      todayTextStyle:
-                          TextStyle(color: Colors.black), // 오늘 날짜의 텍스트 스타일 검정색
+                      outsideDaysVisible: false,
+                      todayTextStyle: TextStyle(color: Colors.black),
                     ),
                     calendarBuilders: CalendarBuilders(
                       defaultBuilder: (context, day, focusedDay) {
                         return Container(
                           decoration: BoxDecoration(
-                            color: getHighlightColor(day), // 강조 색상 설정
+                            color: getHighlightColor(day),
                             shape: BoxShape.circle,
                           ),
                           margin: EdgeInsets.all(4.0),
                           alignment: Alignment.center,
                           child: Text(
                             day.day.toString(),
-                            style: TextStyle(
-                                color: Colors.black), // 모든 날짜의 폰트 색상 검정색
+                            style: TextStyle(color: Colors.black),
                           ),
                         );
                       },
@@ -155,6 +153,130 @@ class _MyDiaryScreenState extends State<MyDiaryScreen> {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        selectedIndex: 0, // My Diary 아이콘이 활성화되도록 설정
+      ),
+    );
+  }
+}
+
+class CustomBottomNavigationBar extends StatefulWidget {
+  final int selectedIndex;
+  CustomBottomNavigationBar({required this.selectedIndex});
+
+  @override
+  _CustomBottomNavigationBarState createState() =>
+      _CustomBottomNavigationBarState();
+}
+
+class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.selectedIndex;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 360.0,
+      height: 106.0,
+      decoration: BoxDecoration(
+        color: Color(0xFF3254ED),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            offset: Offset(0, -4),
+            blurRadius: 8,
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+        ),
+        child: BottomNavigationBar(
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: _buildNavItem('assets/icon/diary.svg', 'Diary', 0),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: _buildNavItem('assets/icon/home_icon.svg', 'Home', 1),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: _buildNavItem('assets/icon/profile_icon.svg', 'Profile', 2),
+              label: '',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white70,
+          backgroundColor: Color(0xFF3254ED),
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          onTap: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+
+            if (index == 0) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyDiaryScreen()),
+              );
+            } else if (index == 1) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HomeScreen()),
+              );
+            } else if (index == 2) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EmotionChart()),
+              );
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(String assetPath, String label, int index) {
+    return Container(
+      decoration: BoxDecoration(
+        color: _selectedIndex == index ? Colors.white : Colors.transparent,
+        shape: BoxShape.circle,
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+            assetPath,
+            color: _selectedIndex == index ? Color(0xFF3254ED) : Colors.white70,
+            width: 30,
+            height: 30,
+          ),
+          SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color:
+                  _selectedIndex == index ? Color(0xFF3254ED) : Colors.white70,
+              fontSize: 12,
+            ),
+          ),
+        ],
       ),
     );
   }

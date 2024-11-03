@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../api/auth_api.dart';
+import '../screens/calendar_page.dart'; // MyDiaryScreen import 추가
+import '../screens/profile_page.dart'; // EmotionChart import 추가
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,17 +39,17 @@ class CustomBottomNavigationBar extends StatefulWidget {
 }
 
 class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
   bool _hasSeenPopup = false;
   final Color popupBorderColor = Color(0xFFDE2A3D).withOpacity(0.4);
-  final AuthAPI authAPI = AuthAPI(); // AuthAPI 인스턴스 생성
-  String username = "username"; // 기본값 설정
+  final AuthAPI authAPI = AuthAPI();
+  String username = "username";
 
   @override
   void initState() {
     super.initState();
     _checkIfPopupSeen();
-    _retrieveUsername(); // 사용자 이름 불러오기
+    _retrieveUsername();
   }
 
   Future<void> _checkIfPopupSeen() async {
@@ -132,7 +134,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                   ),
                   SizedBox(height: 20),
                   Text(
-                    '이제 집에 들어가는 순간 withU가 $username을 반겨줄 거예요', // username 사용
+                    '이제 집에 들어가는 순간 withU가 $username을 반겨줄 거예요',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 16),
                   ),
@@ -281,6 +283,20 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
               setState(() {
                 _selectedIndex = index;
               });
+
+              if (index == 0) {
+                // Diary 아이콘 클릭 시 MyDiaryScreen으로 이동
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MyDiaryScreen()),
+                );
+              } else if (index == 2) {
+                // Profile 아이콘 클릭 시 EmotionChart로 이동
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EmotionChart()),
+                );
+              }
             },
           ),
         ),

@@ -2,6 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'main_page.dart'; // main_page.dart 파일을 import
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting(); // 로케일 데이터 초기화
+  runApp(MaterialApp(
+    home: ChatScreen(),
+  ));
+}
 
 class ChatScreen extends StatefulWidget {
   @override
@@ -129,7 +139,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 SizedBox(height: 50),
                 Text(
-                  'Q3. $responder는 뭐라고 대답하실까?',
+                  'Q3. 엄마는 뭐라고 대답하실까?',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -168,10 +178,4 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: ChatScreen(),
-  ));
 }
