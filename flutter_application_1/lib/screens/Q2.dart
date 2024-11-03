@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'Q3.dart';
 
 class Q2Screen extends StatefulWidget {
   @override
@@ -9,10 +12,57 @@ class Q2Screen extends StatefulWidget {
 class _Q2ScreenState extends State<Q2Screen> {
   Set<int> selectedOptions = Set();
 
+  Future<void> submitSelection() async {
+    if (selectedOptions.isEmpty) return;
+
+    final url = Uri.parse('http://10.0.2.2:8001/prequestion/apply1');
+
+    // 선택된 옵션들을 콤마로 구분된 문자열로 변환
+    String favorite1 = selectedOptions.map((option) {
+      switch (option) {
+        case 1:
+          return "영화";
+        case 2:
+          return "음악";
+        case 3:
+          return "전시회";
+        case 4:
+          return "독서";
+        default:
+          return "";
+      }
+    }).join(", ");
+
+    final requestBody = jsonEncode({
+      'id': 1, // 고유 사용자 ID 필요 시 변경
+      'favorite1': favorite1,
+    });
+    print('Sending request body: $requestBody');
+
+    final response = await http.put(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: requestBody,
+    );
+
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+      print(responseBody['message']);
+
+      // Q3Screen으로 이동
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ChatScreen()),
+      );
+    } else {
+      print('Failed to update favorite1: ${response.statusCode}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF9E79F),
+      backgroundColor: Colors.white,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(32.0),
@@ -26,12 +76,11 @@ class _Q2ScreenState extends State<Q2Screen> {
                 mainAxisSpacing: 16,
                 crossAxisSpacing: 16,
                 children: [
-                  _buildOption(1, svgPath: 'assets/icon/movie.svg', text: '영화'),
+                  _buildOption(1, svgPath: 'assets/icon/film.svg', text: '영화'),
                   _buildOption(2, svgPath: 'assets/icon/music.svg', text: '음악'),
                   _buildOption(3,
-                      svgPath: 'assets/icon/exhibition.svg', text: '전시회'),
-                  _buildOption(4,
-                      svgPath: 'assets/icon/reading.svg', text: '독서'),
+                      svgPath: 'assets/icon/picture.svg', text: '전시회'),
+                  _buildOption(4, svgPath: 'assets/icon/book.svg', text: '독서'),
                 ],
               ),
               SizedBox(height: 40),
@@ -46,21 +95,18 @@ class _Q2ScreenState extends State<Q2Screen> {
               ),
               SizedBox(height: 30),
               ElevatedButton(
-                onPressed: () {
-                  print("선택한 옵션: $selectedOptions");
-                },
+                onPressed: submitSelection,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFE2C86E),
+                  backgroundColor: Color(0xFF3254ED),
                   padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
                 child: Text(
-                  '결정',
+                  '다음으로',
                   style: TextStyle(
-                    fontFamily: 'CustomFont',
-                    color: Colors.black,
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -86,10 +132,10 @@ class _Q2ScreenState extends State<Q2Screen> {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isSelected ? Color(0xFF3254ED) : Colors.white,
           borderRadius: BorderRadius.circular(8.0),
           border: Border.all(
-            color: isSelected ? Colors.blue : Colors.grey,
+            color: isSelected ? Color(0xFF3254ED) : Colors.grey,
             width: isSelected ? 2 : 1,
           ),
           boxShadow: [
@@ -100,25 +146,35 @@ class _Q2ScreenState extends State<Q2Screen> {
             ),
           ],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Stack(
           children: [
-            svgPath != null
-                ? SvgPicture.asset(
-                    svgPath,
-                    width: 40,
-                    height: 40,
-                    color: Colors.black54,
-                  )
-                : Icon(Icons.help_outline, size: 40, color: Colors.black54),
-            SizedBox(height: 8),
-            Text(
-              text,
-              style: TextStyle(
-                fontFamily: 'CustomFont',
-                fontSize: 16,
-                color: Colors.black87,
+            Positioned(
+              top: 28,
+              right: 28,
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: isSelected ? Colors.white : Colors.black87,
+                ),
               ),
+            ),
+            Positioned(
+              bottom: 28,
+              left: 28,
+              child: svgPath != null
+                  ? SvgPicture.asset(
+                      svgPath,
+                      width: 34,
+                      height: 34,
+                      color: isSelected ? Colors.white : Colors.black54,
+                    )
+                  : Icon(
+                      Icons.help_outline,
+                      size: 34,
+                      color: isSelected ? Colors.white : Colors.black54,
+                    ),
             ),
           ],
         ),

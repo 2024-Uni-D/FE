@@ -1,134 +1,179 @@
+// Q3.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'main_page.dart'; // main_page.dart 파일을 import
+import 'package:intl/intl.dart'; // 여기서는 initializeDateFormatting 필요 없음
+import 'package:intl/date_symbol_data_local.dart';
 
-class Q2Screen extends StatefulWidget {
-  @override
-  _Q2ScreenState createState() => _Q2ScreenState();
+void main() async {
+  await initializeDateFormatting(); // 여기에 추가
+  runApp(MaterialApp(
+    home: ChatScreen(),
+  ));
 }
 
-class _Q2ScreenState extends State<Q2Screen> {
-  Set<int> selectedOptions = Set();
+class ChatScreen extends StatefulWidget {
+  @override
+  _ChatScreenState createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+  Future<String>? futureResponder;
+
+  @override
+  void initState() {
+    super.initState();
+    futureResponder = fetchResponder();
+  }
+
+  Future<String> fetchResponder() async {
+    try {
+      final url = Uri.parse('http://10.0.2.2:8001/user/retrieve');
+      final requestBody = jsonEncode({'id': 0}); // 예시 ID
+
+      // 보내는 URL과 데이터를 출력
+      print('Sending request to: $url');
+      print('Sending request body: $requestBody');
+      print('Request body type: ${requestBody.runtimeType}');
+
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: requestBody,
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        print('Response: $responseBody');
+        return responseBody['name'] ?? '알 수 없음';
+      } else {
+        print('Failed to retrieve responder: ${response.statusCode}');
+        return '알 수 없음';
+      }
+    } catch (e) {
+      print('Error retrieving responder: $e');
+      return '알 수 없음';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF9E79F),
+      backgroundColor: Colors.white,
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              GridView.count(
-                crossAxisCount: 2,
-                shrinkWrap: true,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-                children: [
-                  _buildOption(1, svgPath: 'assets/icon/movie.svg', text: '영화'),
-                  _buildOption(2, svgPath: 'assets/icon/music.svg', text: '음악'),
-                  _buildOption(3,
-                      svgPath: 'assets/icon/exhibition.svg', text: '전시회'),
-                  _buildOption(4,
-                      svgPath: 'assets/icon/reading.svg', text: '독서'),
-                ],
-              ),
-              SizedBox(height: 40),
-              Text(
-                'Q3. 관심사를 알려주세요!\n(복수 선택 가능)',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+        child: FutureBuilder<String>(
+          future: futureResponder,
+          builder: (context, snapshot) {
+            String responder = "알 수 없음";
+
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasData) {
+                responder = snapshot.data!;
+              }
+            }
+
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 180),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                      margin: EdgeInsets.only(right: 50),
+                      decoration: BoxDecoration(
+                        color: Color(0xFF3254ED),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(15),
+                          topRight: Radius.circular(15),
+                          bottomLeft: Radius.circular(15),
+                        ),
+                      ),
+                      child: Text(
+                        '나 시험 망쳤어.',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () {
-                  print("선택한 옵션: $selectedOptions");
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFE2C86E),
-                  padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(width: 50),
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                      decoration: BoxDecoration(
+                        color: Color(0xFF3254ED),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(15),
+                          topRight: Radius.circular(15),
+                          bottomRight: Radius.circular(15),
+                        ),
+                      ),
+                      child: Icon(
+                        Icons.more_horiz,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 100),
+                Container(
+                  width: 300,
+                  child: TextField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: '답변을 입력하세요',
+                    ),
                   ),
                 ),
-                child: Text(
-                  '결정',
+                SizedBox(height: 50),
+                Text(
+                  'Q3. 엄마는 뭐라고 대답하실까?',
                   style: TextStyle(
-                    fontFamily: 'CustomFont',
-                    color: Colors.black,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
+                    color: Colors.black87,
                   ),
                 ),
-              ),
-            ],
-          ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomeScreen()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF3254ED),
+                    padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  child: Text(
+                    '다음으로',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
   }
-
-  Widget _buildOption(int value, {String? svgPath, required String text}) {
-    bool isSelected = selectedOptions.contains(value);
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          if (isSelected) {
-            selectedOptions.remove(value);
-          } else {
-            selectedOptions.add(value);
-          }
-        });
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8.0),
-          border: Border.all(
-            color: isSelected ? Colors.blue : Colors.grey,
-            width: isSelected ? 2 : 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 4,
-              offset: Offset(2, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            svgPath != null
-                ? SvgPicture.asset(
-                    svgPath,
-                    width: 40,
-                    height: 40,
-                    color: Colors.black54,
-                  )
-                : Icon(Icons.help_outline, size: 40, color: Colors.black54),
-            SizedBox(height: 8),
-            Text(
-              text,
-              style: TextStyle(
-                fontFamily: 'CustomFont',
-                fontSize: 16,
-                color: Colors.black87,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: Q2Screen(),
-  ));
 }
