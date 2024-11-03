@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import '../api/question_api.dart';
-import '../api/answer_api.dart';
+import 'today_Diary.dart'; // DiaryScreen import 추가
 
 class ChattingToday extends StatefulWidget {
   @override
@@ -10,58 +9,15 @@ class ChattingToday extends StatefulWidget {
 }
 
 class _ChattingTodayState extends State<ChattingToday> {
-  final QuestionAPI questionAPI = QuestionAPI();
-  final AnswerAPI answerAPI = AnswerAPI();
-  List<Map<String, dynamic>> messages = [];
-  int? currentOrder; // 현재 질문의 order 값을 저장할 변수
+  List<Map<String, dynamic>> messages = [
+    {"text": "성현아, 오늘은 전시회 어땠어?", "isMine": false}, // 초기 질문 메시지
+  ];
+  bool isChattingComplete = false; // 대화가 완료되었는지 상태를 저장하는 변수
 
   @override
   void initState() {
     super.initState();
-    _loadInitialQuestion(); // 초기화 시 질문 불러오기
-  }
-
-  // 질문을 생성하고, 서버에서 첫 질문을 가져오는 메서드
-  Future<void> _loadInitialQuestion() async {
-    int userId = 1; // 실제 사용자 ID로 설정
-    String todayDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-
-    // 서버에서 질문 생성 및 첫 질문 가져오기
-    final questionResponse = await questionAPI.createQuestion(userId, todayDate);
-
-    if (questionResponse != null) {
-      setState(() {
-        messages.add({"text": questionResponse['question_text'], "isMine": false});
-        currentOrder = questionResponse['order']; // order 값 저장
-      });
-    } else {
-      setState(() {
-        messages.add({"text": "질문을 가져오지 못했습니다.", "isMine": false});
-      });
-    }
-  }
-
-  // 사용자가 메시지를 보냈을 때 호출되는 함수
-  Future<void> _sendMessage(String text) async {
-    setState(() {
-      messages.add({"text": text, "isMine": true});
-    });
-
-    int userId = 1; // 실제 사용자 ID로 설정
-    String todayDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-
-    // 답변 업데이트 API 호출 (currentOrder를 전달)
-    final answerResponse = await answerAPI.updateAnswer(userId, currentOrder!, text, todayDate);
-
-    if (answerResponse != null) {
-      setState(() {
-        messages.add({"text": answerResponse, "isMine": false});
-      });
-    } else {
-      setState(() {
-        messages.add({"text": "답변을 가져오지 못했습니다.", "isMine": false});
-      });
-    }
+    _sendMessage(); // 화면이 로드되자마자 메시지 전송
   }
 
   // 오늘 날짜를 가져오는 함수
@@ -69,6 +25,40 @@ class _ChattingTodayState extends State<ChattingToday> {
     final now = DateTime.now();
     final formatter = DateFormat('yyyy.MM.dd (E)', 'ko');
     return formatter.format(now);
+  }
+
+  // 메시지 딜레이와 함께 추가하는 함수
+  Future<void> _addMessageWithDelay(Map<String, dynamic> message, int delayInSeconds) async {
+    await Future.delayed(Duration(seconds: delayInSeconds));
+    setState(() {
+      messages.add(message);
+    });
+  }
+
+  // 사용자가 메시지를 보냈을 때 호출되는 함수
+  Future<void> _sendMessage() async {
+    // 사용자가 입력한 첫 메시지 추가
+    await _addMessageWithDelay({"text": "오늘 전시회 재미있었어", "isMine": true}, 10);
+    
+    // 응답 메시지 추가
+    await _addMessageWithDelay({"text": "성현, 전시회 재밌었겠다! 오늘 전시회에서 가장 기억에 남는 작품은 뭐였어?", "isMine": false}, 5);
+
+    // 사용자 입력 메시지 추가
+    await _addMessageWithDelay({"text": "밥먹고 있는 고양이 작품이 가장 기억에 남더라고", "isMine": true}, 10);
+
+    // 또 다른 응답 메시지 추가
+    await _addMessageWithDelay({"text": "성현, 오늘 전시회 이야기 들으니까 나도 같이 갔던 기분이야. 🥰 로제랑 브루노 마스가 함께 부른 APT. 이 노래 들어봤어?", "isMine": false}, 5);
+
+    // 사용자 입력 메시지 추가
+    await _addMessageWithDelay({"text": "응 어제 처음 들어봤어", "isMine": true}, 10);
+
+    // 마지막 응답 메시지 추가
+    await _addMessageWithDelay({"text": "성현, 어제 처음 들어봤다고 했는데 어떤 느낌이었어? 뭔가 특별한 감동이 있었을 것 같아. 😊", "isMine": false}, 5);
+
+    // 대화가 완료되면 버튼 비활성화
+    setState(() {
+      isChattingComplete = true;
+    });
   }
 
   @override
@@ -114,10 +104,7 @@ class _ChattingTodayState extends State<ChattingToday> {
                       ),
                       border: isMine
                           ? null
-                          : Border.all(
-                              color: Color(0xFF3254ED),
-                              width: 1.5,
-                            ),
+                          : Border.all(color: Color(0xFF3254ED), width: 1.5),
                     ),
                     child: Text(
                       message["text"],
@@ -135,34 +122,49 @@ class _ChattingTodayState extends State<ChattingToday> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
             child: Row(
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: InputDecoration(
-                      hintText: "메시지를 입력하세요...",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                        borderSide: BorderSide(color: Colors.grey),
-                      ),
-                    ),
-                    onSubmitted: (text) {
-                      _sendMessage(text);
-                      _controller.clear();
-                    },
-                  ),
-                ),
                 IconButton(
-                  icon: Icon(Icons.send, color: Color(0xFF3254ED)),
-                  onPressed: () {
-                    if (_controller.text.trim().isNotEmpty) {
-                      _sendMessage(_controller.text.trim());
-                      _controller.clear();
-                    }
-                  },
+                  icon: Icon(Icons.send, color: isChattingComplete ? Colors.grey : Color(0xFF3254ED)),
+                  onPressed: isChattingComplete
+                      ? null
+                      : () {
+                          if (_controller.text.trim().isNotEmpty) {
+                            _sendMessage();
+                            _controller.clear();
+                          }
+                        },
                 ),
               ],
             ),
           ),
+          SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DiaryScreen()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF3254ED), // 파란색 버튼
+                padding: EdgeInsets.symmetric(vertical: 15),
+                minimumSize: Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text(
+                '확인',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 20),
         ],
       ),
     );

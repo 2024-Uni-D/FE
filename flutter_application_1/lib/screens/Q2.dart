@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'Q3.dart';
 
 class Q2Screen extends StatefulWidget {
   @override
@@ -15,7 +16,6 @@ class _Q2ScreenState extends State<Q2Screen> {
     if (selectedOptions.isEmpty) return;
 
     final url = Uri.parse('http://10.0.2.2:8001/prequestion/apply1');
-    // final url = Uri.parse('http://127.0.0.1:8001/prequestion/apply1');
 
     // 선택된 옵션들을 콤마로 구분된 문자열로 변환
     String favorite1 = selectedOptions.map((option) {
@@ -33,26 +33,27 @@ class _Q2ScreenState extends State<Q2Screen> {
       }
     }).join(", ");
 
-    // 전송할 JSON 본문을 미리 확인
     final requestBody = jsonEncode({
-      'id': 0, // 고유 사용자 ID 필요 시 변경
+      'id': 1, // 고유 사용자 ID 필요 시 변경
       'favorite1': favorite1,
     });
     print('Sending request body: $requestBody');
-    print('Request body type: ${requestBody.runtimeType}');
 
     final response = await http.put(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'id': 1, // 고유 사용자 ID 필요 시 변경
-        'favorite1': favorite1,
-      }),
+      body: requestBody,
     );
 
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
       print(responseBody['message']);
+
+      // Q3Screen으로 이동
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ChatScreen()),
+      );
     } else {
       print('Failed to update favorite1: ${response.statusCode}');
     }
@@ -78,7 +79,7 @@ class _Q2ScreenState extends State<Q2Screen> {
                   _buildOption(1, svgPath: 'assets/icon/film.svg', text: '영화'),
                   _buildOption(2, svgPath: 'assets/icon/music.svg', text: '음악'),
                   _buildOption(3,
-                      svgPath: 'assets/icon/image.svg', text: '전시회'),
+                      svgPath: 'assets/icon/picture.svg', text: '전시회'),
                   _buildOption(4, svgPath: 'assets/icon/book.svg', text: '독서'),
                 ],
               ),

@@ -17,7 +17,7 @@ class QuestionAPI {
       );
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = jsonDecode(utf8.decode(response.bodyBytes));  // UTF-8 디코딩
         print("Question created: $data");
         return data;
       } else {

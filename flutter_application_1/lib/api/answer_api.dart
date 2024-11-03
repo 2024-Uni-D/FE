@@ -17,7 +17,7 @@ class AnswerAPI {
       );
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = jsonDecode(utf8.decode(response.bodyBytes));  // UTF-8 디코딩
         print("Answer updated: $data");
         return data['response'];  // 서버 응답을 화면에 표시하기 위해 반환
       } else {
