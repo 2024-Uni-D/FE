@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'main_page.dart'; // HomeScreen import
+import 'calendar_page.dart'; // MyDiaryScreen import
 
 class EmotionChart extends StatelessWidget {
   final Map<String, double> dataMap = {
@@ -22,7 +25,7 @@ class EmotionChart extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Scrollbar( // 스크롤바 추가
+      body: Scrollbar(
         thumbVisibility: true,
         child: SingleChildScrollView(
           child: Center(
@@ -31,13 +34,13 @@ class EmotionChart extends StatelessWidget {
               children: [
                 SizedBox(height: 45),
                 Text(
-                'LOGO',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  'LOGO',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
                 ),
-              ),
                 SizedBox(height: 45),
                 PieChart(
                   dataMap: dataMap,
@@ -62,7 +65,7 @@ class EmotionChart extends StatelessWidget {
                 ),
                 SizedBox(height: 50),
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.8, // 동일한 너비 설정
+                  width: MediaQuery.of(context).size.width * 0.8,
                   padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                   margin: EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
@@ -79,7 +82,7 @@ class EmotionChart extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.8, // 동일한 너비 설정
+                  width: MediaQuery.of(context).size.width * 0.8,
                   padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                   margin: EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
@@ -96,7 +99,7 @@ class EmotionChart extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.8, // 동일한 너비 설정
+                  width: MediaQuery.of(context).size.width * 0.8,
                   padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                   margin: EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
@@ -148,6 +151,128 @@ class EmotionChart extends StatelessWidget {
             ),
           ),
         ),
+      ),
+      bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: 2),
+    );
+  }
+}
+
+class CustomBottomNavigationBar extends StatefulWidget {
+  final int selectedIndex;
+  CustomBottomNavigationBar({required this.selectedIndex});
+
+  @override
+  _CustomBottomNavigationBarState createState() =>
+      _CustomBottomNavigationBarState();
+}
+
+class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.selectedIndex;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 360.0,
+      height: 106.0,
+      decoration: BoxDecoration(
+        color: Color(0xFF3254ED),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            offset: Offset(0, -4),
+            blurRadius: 8,
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+        ),
+        child: BottomNavigationBar(
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: _buildNavItem('assets/icon/diary.svg', 'Diary', 0),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: _buildNavItem('assets/icon/home_icon.svg', 'Home', 1),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: _buildNavItem('assets/icon/profile_icon.svg', 'Profile', 2),
+              label: '',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white70,
+          backgroundColor: Color(0xFF3254ED),
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          onTap: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+
+            if (index == 0) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyDiaryScreen()),
+              );
+            } else if (index == 1) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HomeScreen()),
+              );
+            } else if (index == 2) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EmotionChart()),
+              );
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(String assetPath, String label, int index) {
+    return Container(
+      decoration: BoxDecoration(
+        color: _selectedIndex == index ? Colors.white : Colors.transparent,
+        shape: BoxShape.circle,
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+            assetPath,
+            color: _selectedIndex == index ? Color(0xFF3254ED) : Colors.white70,
+            width: 30,
+            height: 30,
+          ),
+          SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color:
+                  _selectedIndex == index ? Color(0xFF3254ED) : Colors.white70,
+              fontSize: 12,
+            ),
+          ),
+        ],
       ),
     );
   }

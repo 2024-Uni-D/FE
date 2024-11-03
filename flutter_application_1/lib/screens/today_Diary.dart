@@ -3,6 +3,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import '../api/auth_api.dart';
+import 'main_page.dart'; // HomeScreen import
+import 'calendar_page.dart'; // MyDiaryScreen import
+import 'profile_page.dart'; // EmotionChart import
 
 class DiaryScreen extends StatefulWidget {
   @override
@@ -10,20 +13,19 @@ class DiaryScreen extends StatefulWidget {
 }
 
 class _DiaryScreenState extends State<DiaryScreen> {
-  final AuthAPI authAPI = AuthAPI(); // AuthAPI 인스턴스 생성
-  String username = "username";  // 서버에서 받아올 이름
-  String summary = "오늘의 대화 요약 내용이 여기에 표시됩니다."; // 대화 요약
-  int mood = 2; // 0: Positive, 1: Negative, 2: Soso
+  final AuthAPI authAPI = AuthAPI();
+  String username = "username";
+  String summary = "오늘의 대화 요약 내용이 여기에 표시됩니다.";
+  int mood = 2;
 
   @override
   void initState() {
     super.initState();
-    _retrieveUsername(); // 화면이 초기화될 때 사용자 이름 불러오기
+    _retrieveUsername();
   }
 
-  // 서버에서 사용자 이름을 가져오는 메서드
   Future<void> _retrieveUsername() async {
-    int userId = 1; // 예시로 설정한 ID, 실제로는 필요한 ID로 변경
+    int userId = 1;
     String? retrievedName = await authAPI.retrieveUser(userId);
 
     if (retrievedName != null) {
@@ -35,14 +37,12 @@ class _DiaryScreenState extends State<DiaryScreen> {
     }
   }
 
-  // 오늘 날짜 가져오기
   String getCurrentDate() {
     final now = DateTime.now();
     final formatter = DateFormat('yyyy.MM.dd (E)', 'ko');
     return formatter.format(now);
   }
 
-  // 기분 상태에 따른 SVG 경로 가져오기
   String getMoodSvgPath() {
     switch (mood) {
       case 0:
@@ -142,6 +142,128 @@ class _DiaryScreenState extends State<DiaryScreen> {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: 0),
+    );
+  }
+}
+
+class CustomBottomNavigationBar extends StatefulWidget {
+  final int selectedIndex;
+  CustomBottomNavigationBar({required this.selectedIndex});
+
+  @override
+  _CustomBottomNavigationBarState createState() =>
+      _CustomBottomNavigationBarState();
+}
+
+class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.selectedIndex;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 360.0,
+      height: 106.0,
+      decoration: BoxDecoration(
+        color: Color(0xFF3254ED),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            offset: Offset(0, -4),
+            blurRadius: 8,
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+        ),
+        child: BottomNavigationBar(
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: _buildNavItem('assets/icon/diary.svg', 'Diary', 0),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: _buildNavItem('assets/icon/home_icon.svg', 'Home', 1),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: _buildNavItem('assets/icon/profile_icon.svg', 'Profile', 2),
+              label: '',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white70,
+          backgroundColor: Color(0xFF3254ED),
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          onTap: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+
+            if (index == 0) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyDiaryScreen()),
+              );
+            } else if (index == 1) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HomeScreen()),
+              );
+            } else if (index == 2) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EmotionChart()),
+              );
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(String assetPath, String label, int index) {
+    return Container(
+      decoration: BoxDecoration(
+        color: _selectedIndex == index ? Colors.white : Colors.transparent,
+        shape: BoxShape.circle,
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+            assetPath,
+            color: _selectedIndex == index ? Color(0xFF3254ED) : Colors.white70,
+            width: 30,
+            height: 30,
+          ),
+          SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color:
+                  _selectedIndex == index ? Color(0xFF3254ED) : Colors.white70,
+              fontSize: 12,
+            ),
+          ),
+        ],
       ),
     );
   }
