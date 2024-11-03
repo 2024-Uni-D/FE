@@ -15,7 +15,7 @@ class DiaryScreen extends StatefulWidget {
 class _DiaryScreenState extends State<DiaryScreen> {
   final AuthAPI authAPI = AuthAPI();
   String username = "username";
-  String summary = "오늘의 대화 요약 내용이 여기에 표시됩니다.";
+  String summary = "오늘 전시회 정말 재미있었어! \n전시장 분위기부터가 너무 좋았고, \n밥 먹고 있는 고양이 작품이 가장 기억에 남더라. \n그 고양이의 표정이 너무 귀엽고 인상 깊었어. \n특히 어제 처음 들었던 노래가 전시와 잘 어울려서 \n노래 들으면서 작품을 감상하는 순간이 정말 행복했어.\n마치 작품 속에 들어간 느낌이었달까?\n그 순간이 계속 떠오르고 잊혀지지가 않아.\n이번 전시회는 정말 특별한 경험이었어.\n앞으로도 이런 시간을 자주 만들고 싶어.\n마음이 편안해지고 기분도 좋아지더라.\n다음에도 좋은 전시회 있으면 꼭 가보고 싶어!" ;
   int mood = 2;
 
   @override
@@ -127,7 +127,6 @@ class _DiaryScreenState extends State<DiaryScreen> {
                         ),
                       ),
                       SizedBox(height: 8),
-                      for (int i = 0; i < 20; i++)
                         Text(
                           summary,
                           style: TextStyle(
