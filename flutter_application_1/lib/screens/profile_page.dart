@@ -115,7 +115,7 @@ class EmotionChart extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'user님 맞춤형으로 추천해드려요!',
+                        '상현님 맞춤형으로 추천해드려요!',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[700],
@@ -123,7 +123,7 @@ class EmotionChart extends StatelessWidget {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        '안양FC\nVS. 전북현대',
+                        '대구\nVS. 제주',
                         style: TextStyle(
                           fontSize: 22,
                           color: Colors.blue[800],

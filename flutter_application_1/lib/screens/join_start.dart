@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import '../api/auth_api.dart'; // AuthAPI import 추가
+import 'package:flutter_svg/flutter_svg.dart'; // SVG 패키지 추가
+import '../api/auth_api.dart';
 import '../models/user.dart';
+import '../screens/Q1.dart'; // Q1 화면 import 추가
 
 class JoinStartPageScreen extends StatefulWidget {
   @override
@@ -10,7 +12,6 @@ class JoinStartPageScreen extends StatefulWidget {
 class _JoinStartPageScreenState extends State<JoinStartPageScreen> {
   final AuthAPI authAPI = AuthAPI();
 
-  // 각 입력 필드를 위한 컨트롤러
   final TextEditingController nameController = TextEditingController();
   final TextEditingController userIdController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -18,7 +19,6 @@ class _JoinStartPageScreenState extends State<JoinStartPageScreen> {
 
   @override
   void dispose() {
-    // 컨트롤러 해제
     nameController.dispose();
     userIdController.dispose();
     passwordController.dispose();
@@ -26,7 +26,6 @@ class _JoinStartPageScreenState extends State<JoinStartPageScreen> {
   }
 
   void _registerUser() async {
-    // User 객체 생성
     final user = User(
       userId: userIdController.text,
       password: passwordController.text,
@@ -36,12 +35,16 @@ class _JoinStartPageScreenState extends State<JoinStartPageScreen> {
           : '',
     );
 
-    // 회원가입 요청 실행
     try {
       await authAPI.registerUser(user);
       print("회원가입에 성공했습니다!");
+
+      // 회원가입 성공 시 Q1Screen으로 이동
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Q1Screen()),
+      );
     } catch (e) {
-      // 실패 시 콘솔에 오류 메시지 출력
       print("회원가입에 실패했습니다: $e");
     }
   }
@@ -56,23 +59,21 @@ class _JoinStartPageScreenState extends State<JoinStartPageScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Text(
-                'LOGO',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
+              SvgPicture.asset(
+                'assets/icon/Logo.svg', // SVG 로고 파일 경로
+                width: 100, // 로고 크기 설정
+                height: 100,
               ),
               SizedBox(height: 40),
               buildInputField('이름', controller: nameController),
               buildInputField('아이디', controller: userIdController),
-              buildInputField('비밀번호', controller: passwordController, isPassword: true),
+              buildInputField('비밀번호',
+                  controller: passwordController, isPassword: true),
               buildInputField('생년월일', isDateField: true),
               SizedBox(height: 30),
               Center(
                 child: ElevatedButton(
-                  onPressed: _registerUser, // 회원가입 버튼 클릭 시 _registerUser 호출
+                  onPressed: _registerUser,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF3254ED),
                     padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
@@ -96,9 +97,10 @@ class _JoinStartPageScreenState extends State<JoinStartPageScreen> {
     );
   }
 
-  // 입력 필드 생성 함수 (생년월일 필드일 때와 아닐 때를 구분)
   Widget buildInputField(String label,
-      {TextEditingController? controller, bool isDateField = false, bool isPassword = false}) {
+      {TextEditingController? controller,
+      bool isDateField = false,
+      bool isPassword = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20.0),
       child: Column(
@@ -111,11 +113,10 @@ class _JoinStartPageScreenState extends State<JoinStartPageScreen> {
           SizedBox(height: 0),
           TextField(
             controller: controller,
-            obscureText: isPassword, // 비밀번호 필드일 때 텍스트 가리기 설정
-            readOnly: isDateField, // 생년월일 필드일 때만 읽기 전용 설정
+            obscureText: isPassword,
+            readOnly: isDateField,
             onTap: isDateField
                 ? () async {
-                    // 생년월일 필드를 누르면 날짜 선택기 열기
                     final DateTime? pickedDate = await showDatePicker(
                       context: context,
                       initialDate: selectedDate ?? DateTime.now(),
