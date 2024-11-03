@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../api/auth_api.dart';
 import '../screens/calendar_page.dart'; // MyDiaryScreen import 추가
 import '../screens/profile_page.dart'; // EmotionChart import 추가
+import '../screens/chattingToday.dart'; // EmotionChart import 추가
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -223,10 +224,20 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                   ),
                   SizedBox(height: 50),
                   Center(
-                    child: SvgPicture.asset(
-                      'assets/icon/speak_icon.svg',
-                      width: 150,
-                      height: 150,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ChattingToday()), // ChattingToday 페이지로 이동
+                        );
+                      },
+                      child: SvgPicture.asset(
+                        'assets/icon/speak_icon.svg',
+                        width: 150,
+                        height: 150,
+                      ),
                     ),
                   ),
                 ],

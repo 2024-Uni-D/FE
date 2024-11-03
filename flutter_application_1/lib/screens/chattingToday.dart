@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'today_Diary.dart'; // DiaryScreen import 추가
 
 class ChattingToday extends StatefulWidget {
   @override
@@ -14,13 +15,7 @@ class _ChattingTodayState extends State<ChattingToday> {
     {"text": "오늘은 무엇을 도와드릴까요?", "isMine": false},
     {"text": "안녕하세요, 문의드립니다.", "isMine": true},
     {"text": "네, 어떻게 도와드릴까요?", "isMine": false},
-    {"text": "네, 어떻게 도와드릴까요?", "isMine": false},
-    {"text": "네, 어떻게 도와드릴까요?", "isMine": false},
-    {"text": "네, 어떻게 도와드릴까요?", "isMine": false},
-    {"text": "네, 어떻게 도와드릴까요?", "isMine": false},
-    {"text": "안녕하세요, 문의드립니다.", "isMine": true},
-    {"text": "안녕하세요, 문의드립니다.", "isMine": true},
-    {"text": "안녕하세요, 문의드립니다.", "isMine": true},
+    // 추가 메시지 생략
   ];
 
   // 오늘 날짜를 가져오는 함수
@@ -74,9 +69,7 @@ class _ChattingTodayState extends State<ChattingToday> {
                       ),
                       border: isMine
                           ? null
-                          : Border.all(
-                              color: Color(0xFF3254ED),
-                              width: 1.5), // 회색 말풍선 테두리 추가
+                          : Border.all(color: Color(0xFF3254ED), width: 1.5),
                     ),
                     child: Text(
                       message["text"],
@@ -90,7 +83,36 @@ class _ChattingTodayState extends State<ChattingToday> {
               },
             ),
           ),
-          SizedBox(height: 100), // 네비게이션 바가 들어갈 공간 확보
+          SizedBox(height: 20),
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DiaryScreen()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF3254ED), // 파란색 버튼
+                padding: EdgeInsets.symmetric(vertical: 15),
+                minimumSize: Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text(
+                '확인',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 20), // 여백 추가
         ],
       ),
     );
