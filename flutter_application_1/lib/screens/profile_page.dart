@@ -33,13 +33,10 @@ class EmotionChart extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(height: 45),
-                Text(
-                  'LOGO',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
+                SvgPicture.asset(
+                  'assets/icon/Logo.svg', // SVG 파일을 표시
+                  width: 100, // 적절한 크기로 설정
+                  height: 100,
                 ),
                 SizedBox(height: 45),
                 PieChart(
