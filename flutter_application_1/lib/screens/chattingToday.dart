@@ -10,7 +10,7 @@ class ChattingToday extends StatefulWidget {
 
 class _ChattingTodayState extends State<ChattingToday> {
   List<Map<String, dynamic>> messages = [
-    {"text": "성현아, 오늘은 전시회 어땠어?", "isMine": false}, // 초기 질문 메시지
+    {"text": "상현아, 오늘은 전시회 어땠어?", "isMine": false}, // 초기 질문 메시지
   ];
   bool isChattingComplete = false; // 대화가 완료되었는지 상태를 저장하는 변수
 
@@ -41,19 +41,19 @@ class _ChattingTodayState extends State<ChattingToday> {
     await _addMessageWithDelay({"text": "오늘 전시회 재미있었어", "isMine": true}, 10);
     
     // 응답 메시지 추가
-    await _addMessageWithDelay({"text": "성현, 전시회 재밌었겠다! 오늘 전시회에서 가장 기억에 남는 작품은 뭐였어?", "isMine": false}, 5);
+    await _addMessageWithDelay({"text": "상현, 전시회 재밌었겠다! 오늘 전시회에서 가장 기억에 남는 작품은 뭐였어?", "isMine": false}, 5);
 
     // 사용자 입력 메시지 추가
     await _addMessageWithDelay({"text": "밥먹고 있는 고양이 작품이 가장 기억에 남더라고", "isMine": true}, 10);
 
     // 또 다른 응답 메시지 추가
-    await _addMessageWithDelay({"text": "성현, 오늘 전시회 이야기 들으니까 나도 같이 갔던 기분이야. 🥰 로제랑 브루노 마스가 함께 부른 APT. 이 노래 들어봤어?", "isMine": false}, 5);
+    await _addMessageWithDelay({"text": "상현, 오늘 전시회 이야기 들으니까 나도 같이 갔던 기분이야. 🥰 로제랑 브루노 마스가 함께 부른 APT. 이 노래 들어봤어?", "isMine": false}, 5);
 
     // 사용자 입력 메시지 추가
     await _addMessageWithDelay({"text": "응 어제 처음 들어봤어", "isMine": true}, 10);
 
     // 마지막 응답 메시지 추가
-    await _addMessageWithDelay({"text": "성현, 어제 처음 들어봤다고 했는데 어떤 느낌이었어? 뭔가 특별한 감동이 있었을 것 같아. 😊", "isMine": false}, 5);
+    await _addMessageWithDelay({"text": "상현, 어제 처음 들어봤다고 했는데 어떤 느낌이었어? 뭔가 특별한 감동이 있었을 것 같아. 😊", "isMine": false}, 5);
 
     // 대화가 완료되면 버튼 비활성화
     setState(() {
